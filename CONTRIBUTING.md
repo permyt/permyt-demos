@@ -15,9 +15,14 @@ settings, tests and deploy config.
   scopes.
 - **Keep UI copy honest**: PERMYT provides *source-direct provenance* — say "the
   authoritative source answered directly", not "cryptographically verified".
+- **Dependencies use [uv](https://docs.astral.sh/uv/)** — each demo is a uv
+  project (`pyproject.toml` + `uv.lock`, interpreter pinned by `.python-version`).
+  Prod deps live in `[project.dependencies]`, dev tools in `[dependency-groups] dev`.
+  `uv sync` installs both (local dev); `uv sync --no-dev` installs prod only
+  (deploy). After changing dependencies, run `uv lock` and commit `uv.lock`.
 - **Secrets & machine state stay out of git** — `.env`, `keys/`, `settings/local.py`,
-  `env/`, `<demo>/static/`, `*.sqlite3` are all ignored. Commit `.env.example`
-  instead of `.env`.
+  `.venv/` (and legacy `env/`), `<demo>/static/`, `*.sqlite3` are all ignored.
+  Commit `.env.example` instead of `.env`.
 - **Formatting/lint**: each demo uses `black`/`ruff` (line length 100). Run them
   before committing; `TestCode` (black/pylint) is part of each suite.
 
@@ -27,19 +32,24 @@ Each demo has its own suite (pure `pytest`, `settings.test`):
 
 ```bash
 cd <demo>
-python -m pytest              # all tests
-python -m pytest -k <keyword> # subset
+uv sync                       # ensure prod+dev deps in .venv
+source .venv/bin/activate     # or prefix with .venv/bin/
+pytest                        # all tests
+pytest -k <keyword>           # subset
 ```
 
 ## Adding a new demo
 
 1. Clone the closest existing demo (a provider from `government/`, a requester from
-   `stripe-kyc/` or `requester/`) into a new top-level directory.
+   `stripe/` or `requester/`) into a new top-level directory. Pick the next free
+   port.
 2. Rebrand: `settings/base.py` (`SESSION_COOKIE_NAME`, `ORGANIZATION_NAME`,
-   `BASE_URL` port), `config/{app,tasks,beat,nginx}.conf` + `config/update`
-   (program names, port, celery node, deploy path, `server_name`), templates and
-   SCSS.
-3. Regenerate migrations if the model changed; run `manage.py check`,
+   `BASE_URL` port), `config/{app,tasks,beat,nginx}.conf` (program names, port,
+   celery node, deploy path, `server_name`), templates and SCSS.
+3. Update `pyproject.toml` deps if they differ, then `uv lock` and commit `uv.lock`.
+   Every demo must ship an `update_scope` command — a real one for providers, the
+   no-op copy for requesters (`app/core/requests/management/commands/update_scope.py`).
+4. Regenerate migrations if the model changed; run `uv sync`, `manage.py check`,
    `makemigrations --check`, and `compress --force`.
-4. Add a row to the table in [`README.md`](README.md).
-5. Register the Service on the broker dashboard and (providers) run `update_scope`.
+5. Add a row to the table in [`README.md`](README.md).
+6. Register the Service on the broker dashboard and (providers) run `update_scope`.

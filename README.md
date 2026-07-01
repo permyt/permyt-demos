@@ -59,7 +59,7 @@ permyt-demo/
     settings/                 # base.py, dev.py, test.py  (local.py is git-ignored)
     config/                   # nginx.conf, app.conf, tasks.conf, beat.conf, update
     keys/                     # ES256 keypair + broker pubkey        (git-ignored)
-    manage.py  requirements.txt  pytest.ini  CLAUDE.md  README.md
+    pyproject.toml  uv.lock  .python-version  manage.py  pytest.ini  CLAUDE.md
   README.md  LICENSE  WORKSHOP.md  .gitignore  .gitattributes
 ```
 
@@ -67,12 +67,13 @@ Per-demo internals are documented in each demo's own `CLAUDE.md` / `README.md`.
 
 ## Running a demo locally
 
-Each demo is independent. From its directory:
+Each demo is independent and uses [uv](https://docs.astral.sh/uv/) with a `.venv`
+virtualenv. From its directory:
 
 ```bash
 cd <demo>
-python -m venv env && source env/bin/activate
-pip install -r requirements.txt
+uv sync                              # create .venv (Python from .python-version) + install prod+dev deps
+source .venv/bin/activate            # (or prefix commands with .venv/bin/)
 cp .env.example .env                 # fill in secrets (see below)
 
 # One-time ES256 keys
@@ -92,17 +93,32 @@ it, upload `keys/connector/public.pem`, set its webhook to
 `PERMYT_SERVICE_ID`. Providers must additionally run `manage.py update_scope`
 whenever their `app/core/requests/scopes/catalogue.py` changes.
 
-Requirements: Python 3.14, Redis (broker/cache/websockets), and a running PERMYT
-broker.
+Requirements: [uv](https://docs.astral.sh/uv/), Python 3.14, Redis
+(broker/cache/websockets), and a running PERMYT broker.
 
 ## Server deployment
 
-Each demo deploys under `demo/<name>/` on the server and is driven by its own
-`config/` (nginx + supervisor programs + an `update` script). The `update`
-script pulls, installs, migrates, `collectstatic`, (providers) `update_scope`,
-and restarts that demo's supervisor programs. Generated state — `env/`, `keys/`,
-`.env`, `settings/local.py`, `<demo>/static/`, `*.sqlite3` — is git-ignored and
-lives only on the server.
+All demos deploy under one `demo/` folder on the server and share a single
+[`update`](update) script at the repo root. It pulls the monorepo once, then
+updates **only** the demos that need it — those whose code changed in the pull,
+any missing their `.venv`, or all of them with `--force`:
+
+```bash
+cd /var/deployments/demo
+./update                 # pull, then update just the demos that changed
+./update --force         # rebuild/restart every demo
+./update bank government  # update only the named demos
+```
+
+For each demo the script runs `uv sync --frozen --no-dev` (installs the pinned
+**prod** dependencies from `uv.lock` into `.venv`, dev group excluded), migrates,
+runs `update_scope` (a no-op on requesters), `collectstatic`, and restarts that
+demo's supervisor programs (names read from the demo's own `config/`). Each
+demo's `config/` still provides its nginx + supervisor program definitions.
+Prod config (DEBUG, DB, secrets) is loaded from each demo's git-ignored
+`settings/local.py`. Generated state — `.venv/`, `keys/`, `.env`,
+`settings/local.py`, `<demo>/static/`, `*.sqlite3` — is git-ignored and lives
+only on the server.
 
 ### Migrating existing per-demo checkouts to this monorepo
 
@@ -124,12 +140,18 @@ git fetch origin
 git checkout -f <branch>            # e.g. main — overwrites tracked SOURCE only
 
 # 3. Confirm nothing local was touched
-git status                          # env/, keys/, .env, static/ show as ignored
+git status                          # keys/, .env, static/, old env/ show as ignored
+
+# 4. Build the uv .venv for every demo and (re)start them
+./update --force
 ```
 
 `git checkout -f` only overwrites **tracked** files (source that already matches
-what's deployed), so existing code, keys, envs and databases are untouched.
-Afterwards, each demo's `config/update` continues to work unchanged.
+what's deployed), so existing code, keys, databases and the old `env/`
+virtualenvs are untouched. The demos now run from a uv `.venv` (created by
+`./update --force`); the previous `env/` directories are unused and can be
+deleted. Supervisor/nginx configs already point at `.venv/bin/…`, so re-copy
+each demo's `config/*.conf` into supervisor/nginx and reload once.
 
 ## License
 
