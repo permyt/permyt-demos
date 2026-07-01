@@ -99,15 +99,17 @@ Requirements: [uv](https://docs.astral.sh/uv/), Python 3.14, Redis
 ## Server deployment
 
 All demos deploy under one `demo/` folder on the server and share a single
-[`update`](update) script at the repo root. It pulls the monorepo once, then
-updates **only** the demos that need it — those whose code changed in the pull,
-any missing their `.venv`, or all of them with `--force`:
+[`update`](update) script at the repo root. It cd's into the deploy folder
+itself (`/var/deployments/demo`, override with `DEMO_ROOT`) so it **runs from
+any directory**, pulls the monorepo once, then updates **only** the demos that
+need it — those whose code changed in the pull, any missing their `.venv`, or
+all of them with `--force`:
 
 ```bash
-cd /var/deployments/demo
-./update                 # pull, then update just the demos that changed
-./update --force         # rebuild/restart every demo
-./update bank government  # update only the named demos
+/var/deployments/demo/update    # from anywhere — pulls, updates changed demos
+./update --force                # rebuild/restart every demo
+./update bank government         # update only the named demos
+DEMO_ROOT="$PWD" ./update        # run against a different folder (e.g. local)
 ```
 
 For each demo the script runs `uv sync --frozen --no-dev` (installs the pinned

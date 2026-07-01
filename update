@@ -12,10 +12,17 @@
 # migrate, push scopes (providers only), collect static, and restart that
 # demo's supervisor programs (names are read from the demo's own config/).
 #
-# Usage:
-#   ./update                 # pull, update changed demos
-#   ./update --force         # update every demo, changed or not
-#   ./update bank government  # update only these demos (implies force)
+# Runs from ANY directory — it cd's into the deploy folder itself (like the old
+# per-demo scripts did) before pulling, so `/var/deployments/demo/update`,
+# a symlink, or a cron entry all work.
+#
+# Usage (from anywhere):
+#   update                 # pull, update changed demos
+#   update --force         # update every demo, changed or not
+#   update bank government  # update only these demos (implies force)
+#
+# Env:
+#   DEMO_ROOT   the monorepo/deploy folder (default /var/deployments/demo).
 #
 # Each demo is a uv project (pyproject.toml + uv.lock, Python pinned by
 # .python-version); prod deps install via `uv sync --frozen --no-dev`.
@@ -24,8 +31,11 @@
 
 set -uo pipefail
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
-cd "$ROOT"
+# The deploy folder that holds every demo. Hardcoded (like the old scripts'
+# /var/deployments/demo/<name>) so the script works from any cwd; override with
+# DEMO_ROOT for local runs, e.g. `DEMO_ROOT="$PWD" ./update`.
+DEMO_ROOT="${DEMO_ROOT:-/var/deployments/demo}"
+cd "$DEMO_ROOT" || { echo "deploy folder not found: $DEMO_ROOT" >&2; exit 1; }
 
 FORCE=0
 ONLY=()
