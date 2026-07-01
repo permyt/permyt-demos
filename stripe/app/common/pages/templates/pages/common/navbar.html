@@ -1,0 +1,28 @@
+{% load static %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="40" height="40" rx="9" fill="#635bff"/>
+        <path d="M19.2 16.1c0-1 .82-1.39 2.16-1.39 1.94 0 4.39.59 6.33 1.64v-6a16.8 16.8 0 0 0-6.33-1.17c-5.18 0-8.62 2.7-8.62 7.22 0 7.04 9.7 5.92 9.7 8.95 0 1.18-1.03 1.56-2.45 1.56-2.12 0-4.83-.87-6.97-2.04v6.08a17.7 17.7 0 0 0 6.96 1.45c5.3 0 8.95-2.62 8.95-7.2-.01-7.6-9.74-6.25-9.74-9.1Z" fill="#fff"/>
+      </svg>
+      <span>Stripe</span>
+    </span>
+    {% if organization_name %}
+    <span class="brand-divider"></span>
+    <span class="brand-context">{{ organization_name }}</span>
+    {% endif %}
+  </a>
+  <div class="nav-right">
+    <span class="nav-mode">Test mode</span>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" class="nav-logout-form">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout">
+        <i data-lucide="log-out"></i>
+        Sign out
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</nav>

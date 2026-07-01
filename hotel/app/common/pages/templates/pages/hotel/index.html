@@ -1,0 +1,214 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+
+<!-- ── Hero ──────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-copy fade-in" style="--stagger: 0">
+      <span class="eyebrow">Old Town &middot; Est. 1924</span>
+      <h1 class="hero-title">{{ hotel_name }}</h1>
+      <p class="hero-lede">
+        Fourteen sunlit suites behind a terracotta façade, where the morning
+        smells of citrus and fresh linen. Slow mornings, long lunches,
+        and a check-in that takes about a minute.
+      </p>
+      <div class="hero-actions">
+        <a href="#checkin" class="button primary scroll-to">Begin check-in</a>
+        <a href="#suites" class="button ghost scroll-to">View the suites</a>
+      </div>
+      <ul class="hero-facts">
+        <li><strong>{{ rate }} {{ currency }}</strong><span>per night</span></li>
+        <li><strong>14</strong><span>suites</span></li>
+        <li><strong>9.6</strong><span>guest rating</span></li>
+      </ul>
+    </div>
+  </div>
+  <span class="hero-scroll-hint" aria-hidden="true">scroll</span>
+</section>
+
+<!-- ── Suites ────────────────────────────────────────────────────── -->
+<section id="suites" class="suites">
+  <div class="suites-inner">
+    <header class="suites-head fade-in" style="--stagger: 0">
+      <span class="eyebrow">The rooms</span>
+      <h2>Rooms made for staying in</h2>
+      <p>Each suite is its own small world — warm plaster, woven textiles,
+        and a window that opens to the courtyard.</p>
+    </header>
+    <div class="suite-grid">
+      <article class="suite-card fade-in" style="--stagger: 0">
+        <div class="suite-photo suite-photo--terra" aria-hidden="true"></div>
+        <div class="suite-body">
+          <h3>Courtyard Suite</h3>
+          <p>Ground-floor calm opening onto the orange-tree courtyard. King bed, deep soaking tub.</p>
+          <span class="suite-rate">from {{ rate }} {{ currency }} / night</span>
+        </div>
+      </article>
+      <article class="suite-card fade-in" style="--stagger: 1">
+        <div class="suite-photo suite-photo--sage" aria-hidden="true"></div>
+        <div class="suite-body">
+          <h3>Garden Loft</h3>
+          <p>A split-level retreat under the eaves, with a private terrace and afternoon shade.</p>
+          <span class="suite-rate">from 180 {{ currency }} / night</span>
+        </div>
+      </article>
+      <article class="suite-card fade-in" style="--stagger: 2">
+        <div class="suite-photo suite-photo--gold" aria-hidden="true"></div>
+        <div class="suite-body">
+          <h3>Rooftop Atelier</h3>
+          <p>Our top suite — soft light all day, a freestanding bath, and the whole old town below.</p>
+          <span class="suite-rate">from 260 {{ currency }} / night</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── Check-in (PERMYT split-pane) ──────────────────────────────── -->
+<section id="checkin" class="section checkin-shell">
+  <div class="checkin-head fade-in" style="--stagger: 0">
+    <span class="eyebrow">Arrival</span>
+    <h2>Check in without the clipboard</h2>
+    <p>Scan once with your PERMYT app. Your details arrive verified —
+      we never ask you to type a thing.</p>
+  </div>
+
+  <div class="checkin-inner">
+    <div class="checkin-form-pane fade-in" style="--stagger: 0">
+      <form id="checkinForm" class="checkin-form"
+            data-status="{{ status }}"
+            data-rate="{{ rate }}"
+            data-currency="{{ currency }}">
+        {% csrf_token %}
+
+        <div class="form-head">
+          <span class="form-kicker">Guest registration</span>
+          <h3>Your details</h3>
+        </div>
+
+        <label>
+          <span class="field-label">Full name</span>
+          <input type="text" name="full_name" id="field-full_name"
+                 value="{{ form_data.full_name|default:'' }}"
+                 placeholder="Arrives from PERMYT" disabled>
+        </label>
+
+        <label>
+          <span class="field-label">Address</span>
+          <input type="text" name="address" id="field-address"
+                 value="{{ form_data.address|default:'' }}"
+                 placeholder="Arrives from PERMYT" disabled>
+        </label>
+
+        <label class="row">
+          <span>
+            <span class="field-label">Country</span>
+            <input type="text" name="country" id="field-country"
+                   value="{{ form_data.country|default:'' }}"
+                   placeholder="ISO" maxlength="2" disabled>
+          </span>
+          <span>
+            <span class="field-label">VAT / Tax ID</span>
+            <input type="text" name="vat" id="field-vat"
+                   value="{{ form_data.vat|default:'' }}"
+                   placeholder="Arrives from PERMYT" disabled>
+          </span>
+        </label>
+
+        <label class="row">
+          <span>
+            <span class="field-label">Nights</span>
+            <select name="nights" id="field-nights" data-current="{{ nights|default:1 }}"></select>
+          </span>
+          <span class="totals">
+            <span class="field-label">Total</span>
+            <output id="total-display">{{ total }} {{ currency }}</output>
+          </span>
+        </label>
+
+        <button type="submit" id="payBtn" class="button primary block" disabled>
+          Reserve &amp; pay <span id="pay-amount">{{ total }} {{ currency }}</span>
+        </button>
+
+        <p class="form-note">Payment is approved on your phone. We never see your card.</p>
+        <p id="form-status" class="form-status sr-only" aria-live="polite"></p>
+      </form>
+
+      <div id="payOverlay" class="pay-overlay" aria-hidden="true">
+        <div class="pay-overlay-card">
+          <div class="pay-overlay-header">
+            <span class="pay-amount-large" id="pay-overlay-amount"></span>
+            <span class="pay-amount-label">Settling via PERMYT</span>
+          </div>
+          <ol class="pay-track" data-pay-track>
+            <li data-pay-step="request" class="pay-step pending">
+              <span class="pay-step-icon"><i data-lucide="send"></i></span>
+              <span class="pay-step-label">Sending payment request</span>
+            </li>
+            <li data-pay-step="approve" class="pay-step pending">
+              <span class="pay-step-icon"><i data-lucide="smartphone"></i></span>
+              <span class="pay-step-label">Approve on your PERMYT app</span>
+            </li>
+            <li data-pay-step="charge" class="pay-step pending">
+              <span class="pay-step-icon"><i data-lucide="building-2"></i></span>
+              <span class="pay-step-label">Your bank is settling</span>
+              <span class="pay-progress"><span class="pay-progress-bar"></span></span>
+            </li>
+            <li data-pay-step="done" class="pay-step pending">
+              <span class="pay-step-icon"><i data-lucide="check"></i></span>
+              <span class="pay-step-label">Paid</span>
+            </li>
+          </ol>
+          <p id="pay-overlay-status" class="pay-overlay-status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="checkin-qr-pane fade-in" style="--stagger: 1">
+      <div class="qr-card">
+        <div class="qr-card-head">
+          <span class="qr-kicker">Step one</span>
+          <h3>Scan to verify</h3>
+          <p>Open PERMYT and point your camera here.</p>
+        </div>
+        <div id="qr-container" class="qr-frame">{{ qr_svg|safe }}</div>
+        <ol class="stage-track" data-stage-track>
+          <li data-stage="scan" class="stage-step active">
+            <span class="stage-dot"></span>
+            <span class="stage-label">Waiting for scan</span>
+          </li>
+          <li data-stage="approve" class="stage-step pending">
+            <span class="stage-dot"></span>
+            <span class="stage-label">Scanned — approve on PERMYT</span>
+          </li>
+          <li data-stage="fetch" class="stage-step pending">
+            <span class="stage-dot"></span>
+            <span class="stage-label">Retrieving your details</span>
+          </li>
+          <li data-stage="done" class="stage-step pending">
+            <span class="stage-dot"></span>
+            <span class="stage-label">Details verified</span>
+          </li>
+        </ol>
+        <p id="qr-status" class="sr-only" aria-live="polite">Waiting for scan</p>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.__hotel = {
+    sessionKey: "{{ session_key|escapejs }}",
+    rate: parseFloat("{{ rate }}"),
+    currency: "{{ currency|escapejs }}",
+    status: "{{ status|escapejs }}",
+    nights: {{ nights|default:1 }},
+  };
+</script>
+<script src="{% static 'js/hotel.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% load static %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <img src="{% static 'logos/logo-light.svg' %}" alt="PERMYT" class="logo">
+    <img src="{% static 'logos/text-light.svg' %}" alt="PERMYT" class="text">
+  </a>
+  <div class="nav-right">
+    <span class="connector-badge">{{ app_name|default:"Verify" }}</span>
+  </div>
+</nav>

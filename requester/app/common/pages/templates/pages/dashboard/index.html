@@ -1,0 +1,51 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section chat-shell bg-dark">
+  <div class="chat-inner">
+    <header class="chat-header">
+      <div>
+        <h1>Request Data</h1>
+        <p class="subheadline">Describe what you need from PERMYT.</p>
+      </div>
+      <button type="button" class="log-clear" id="clearLogBtn">Clear</button>
+    </header>
+
+    <div id="feed" class="feed">
+      {% for log in logs %}
+      <div class="request-bubble {% if log.success %}ok{% else %}fail{% endif %}"
+           data-request-id="{{ log.permyt_request_id }}">
+        <div class="bubble-description">{{ log.data.description }}</div>
+        <div class="bubble-status">
+          <span class="status-text">{{ log.data.status|default:log.action }}</span>
+          <span class="entry-time">{{ log.updated_at|date:"H:i:s" }}</span>
+          <span class="badge {% if log.success %}success{% else %}error{% endif %}">
+            {% if log.success %}OK{% else %}FAIL{% endif %}
+          </span>
+        </div>
+        {% if log.data.responses %}
+        <pre class="bubble-preview">{{ log.data.responses|pprint }}</pre>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p class="empty-state" id="empty-state">No requests yet.</p>
+      {% endfor %}
+    </div>
+
+    <form id="requestForm" class="composer">
+      {% csrf_token %}
+      <textarea id="description" name="description"
+                placeholder="Describe the access you need…" rows="2" required></textarea>
+      <button type="submit" class="button primary" id="submitBtn">Send</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.__permytUserId = "{{ permyt_user_id|escapejs }}";
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

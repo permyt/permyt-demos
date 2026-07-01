@@ -1,0 +1,194 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero" style="min-height:auto;display:block;padding-bottom:64px;">
+  <div class="wrapper" style="position:relative;z-index:1;">
+    <div class="dash-head fade-in" style="--stagger: 0">
+      <div class="dash-title">
+        <span class="eyebrow"><i data-lucide="badge-check"></i> Verified identity record</span>
+        <h1>{% if is_business %}Organisation record{% else %}Your identity record{% endif %}</h1>
+        <p>
+          {% if is_business %}
+            Authoritative registry record held by the National Digital Identity Service.
+          {% else %}
+            Government-verified identity data. Each field can be shared individually,
+            only with your explicit consent on the PERMYT app.
+          {% endif %}
+        </p>
+      </div>
+      <span class="verified-seal"><i data-lucide="shield-check"></i> Government verified</span>
+    </div>
+
+    <div class="dash-grid fade-in" style="--stagger: 1">
+      <!-- ── Tabbed record ─────────────────────────────────────────── -->
+      <div class="record-card">
+        {% if is_business %}
+        <div class="tablist" role="tablist" aria-label="Organisation record">
+          <button class="tab" role="tab" id="tab-registry" aria-controls="panel-registry" aria-selected="true" data-panel="panel-registry"><i data-lucide="building-2"></i> Registry</button>
+          <button class="tab" role="tab" id="tab-address" aria-controls="panel-address" aria-selected="false" data-panel="panel-address"><i data-lucide="map-pin"></i> Address</button>
+          <button class="tab" role="tab" id="tab-stakeholders" aria-controls="panel-stakeholders" aria-selected="false" data-panel="panel-stakeholders"><i data-lucide="users"></i> Stakeholders</button>
+        </div>
+
+        <form id="profile-form">
+          <!-- Registry -->
+          <div class="tabpanel" id="panel-registry" role="tabpanel" aria-labelledby="tab-registry" tabindex="0">
+            <div class="panel-head"><h3>Company registry</h3><span class="verified-mini"><i data-lucide="check-circle-2"></i> Verified</span></div>
+            <div class="field-grid">
+              <div class="field-card span-2"><label>Legal name</label>
+                <input id="profile-legal_name" name="legal_name" type="text" class="profile-input" value="{{ business.legal_name }}" /></div>
+              <div class="field-card"><label>Registration number</label>
+                <input id="profile-registration_number" name="registration_number" type="text" class="profile-input" value="{{ business.registration_number }}" /></div>
+              <div class="field-card"><label>Incorporation date</label>
+                <input id="profile-incorporation_date" name="incorporation_date" type="date" class="profile-input" value="{{ business.incorporation_date|date:'Y-m-d' }}" /></div>
+              <div class="field-card"><label>Structure</label>
+                <select id="profile-structure" name="structure" class="profile-input">
+                  <option value="private_corporation" {% if business.structure == 'private_corporation' %}selected{% endif %}>Private corporation</option>
+                  <option value="private_partnership" {% if business.structure == 'private_partnership' %}selected{% endif %}>Private partnership</option>
+                  <option value="public_corporation" {% if business.structure == 'public_corporation' %}selected{% endif %}>Public corporation</option>
+                  <option value="sole_proprietorship" {% if business.structure == 'sole_proprietorship' %}selected{% endif %}>Sole proprietorship</option>
+                </select></div>
+              <div class="field-card"><label><span class="sensitive-dot"></span> Tax ID</label>
+                <input id="profile-tax_id" name="tax_id" type="text" class="profile-input" value="{{ business.tax_id }}" /></div>
+              <div class="field-card"><label>MCC</label>
+                <input id="profile-mcc" name="mcc" type="text" class="profile-input" maxlength="4" value="{{ business.mcc }}" /></div>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="tabpanel" id="panel-address" role="tabpanel" aria-labelledby="tab-address" tabindex="0" hidden>
+            <div class="panel-head"><h3>Registered address</h3><span class="verified-mini"><i data-lucide="check-circle-2"></i> Verified</span></div>
+            <div class="field-grid">
+              <div class="field-card span-2"><label>Registered address</label>
+                <textarea id="profile-registered_address" name="registered_address" class="profile-input">{{ business.registered_address }}</textarea></div>
+              <div class="field-card"><label>Country (ISO alpha-2)</label>
+                <input id="profile-country" name="country" type="text" class="profile-input" maxlength="2" value="{{ business.country }}" /></div>
+              <div class="field-card"><label>Website</label>
+                <input id="profile-website" name="website" type="text" class="profile-input" value="{{ business.website }}" /></div>
+            </div>
+          </div>
+
+          <!-- Stakeholders (editable beneficial owners & officers) -->
+          <div class="tabpanel" id="panel-stakeholders" role="tabpanel" aria-labelledby="tab-stakeholders" tabindex="0" hidden>
+            <div class="panel-head">
+              <h3>Beneficial owners &amp; officers</h3>
+              <button type="button" class="button outline btn-sm" id="stk-add"><i data-lucide="plus"></i> Add owner</button>
+            </div>
+            <div id="stk-list" class="stk-list"></div>
+            <p class="empty-state" id="stk-empty" hidden>No beneficial owners yet — add one above.</p>
+            <input type="hidden" name="shareholders_json" id="shareholders_json" />
+          </div>
+
+          <div class="panel-actions" style="padding:0 24px 24px;">
+            <button type="submit" class="button primary save-btn">Save changes</button>
+            <span id="profile-status" class="save-status"></span>
+          </div>
+        </form>
+        {% else %}
+        <div class="tablist" role="tablist" aria-label="Identity record">
+          <button class="tab" role="tab" id="tab-identity" aria-controls="panel-identity" aria-selected="true" data-panel="panel-identity"><i data-lucide="id-card"></i> Identity</button>
+          <button class="tab" role="tab" id="tab-documents" aria-controls="panel-documents" aria-selected="false" data-panel="panel-documents"><i data-lucide="file-text"></i> Documents</button>
+          <button class="tab" role="tab" id="tab-tax" aria-controls="panel-tax" aria-selected="false" data-panel="panel-tax"><i data-lucide="receipt"></i> Tax</button>
+          <button class="tab" role="tab" id="tab-address" aria-controls="panel-address" aria-selected="false" data-panel="panel-address"><i data-lucide="map-pin"></i> Address</button>
+        </div>
+
+        <form id="profile-form">
+          <!-- Identity -->
+          <div class="tabpanel" id="panel-identity" role="tabpanel" aria-labelledby="tab-identity" tabindex="0">
+            <div class="panel-head"><h3>Identity</h3><span class="verified-mini"><i data-lucide="check-circle-2"></i> Verified</span></div>
+            <div class="field-grid">
+              <div class="field-card span-2 photo-card">
+                <div class="photo-frame"><i data-lucide="user-round"></i></div>
+                <div class="photo-meta">Identity photograph<br>On file with the National Identity Service.</div>
+              </div>
+              <div class="field-card"><label>Full legal name</label>
+                <input id="profile-full_name" name="full_name" type="text" class="profile-input" value="{{ profile.full_name }}" /></div>
+              <div class="field-card"><label><span class="sensitive-dot"></span> Date of birth</label>
+                <input id="profile-birthdate" name="birthdate" type="date" class="profile-input" value="{{ profile.birthdate }}" /></div>
+              <div class="field-card"><label><span class="sensitive-dot"></span> Citizen card number</label>
+                <div class="static-value">{{ profile.citizen_card_number|default:"—" }}</div></div>
+              <div class="field-card"><label><span class="sensitive-dot"></span> Phone</label>
+                <input id="profile-phone" name="phone" type="tel" class="profile-input" value="{{ profile.phone }}" /></div>
+              <div class="field-card span-2"><label>Email</label>
+                <input id="profile-email" name="email" type="email" class="profile-input" value="{{ profile.email }}" /></div>
+            </div>
+          </div>
+
+          <!-- Documents -->
+          <div class="tabpanel" id="panel-documents" role="tabpanel" aria-labelledby="tab-documents" tabindex="0" hidden>
+            <div class="panel-head"><h3>Identity documents</h3><span class="verified-mini"><i data-lucide="check-circle-2"></i> Verified</span></div>
+            <div class="field-grid">
+              <div class="field-card"><label><span class="sensitive-dot"></span> Passport number</label>
+                <input id="profile-passport_number" name="passport_number" type="text" class="profile-input" value="{{ profile.passport_number }}" /></div>
+              <div class="field-card"><label><span class="sensitive-dot"></span> Citizen / ID card number</label>
+                <input id="profile-citizen_card_number" name="citizen_card_number" type="text" class="profile-input" value="{{ profile.citizen_card_number }}" /></div>
+              <div class="field-card span-2"><label><span class="sensitive-dot"></span> Social security number</label>
+                <input id="profile-social_security_number" name="social_security_number" type="text" class="profile-input" value="{{ profile.social_security_number }}" /></div>
+            </div>
+          </div>
+
+          <!-- Tax -->
+          <div class="tabpanel" id="panel-tax" role="tabpanel" aria-labelledby="tab-tax" tabindex="0" hidden>
+            <div class="panel-head"><h3>Tax records</h3><span class="verified-mini"><i data-lucide="check-circle-2"></i> Verified</span></div>
+            <div class="field-grid">
+              <div class="field-card"><label><span class="sensitive-dot"></span> Tax ID / NIF</label>
+                <input id="profile-tax_id" name="tax_id" type="text" class="profile-input" value="{{ profile.tax_id }}" /></div>
+              <div class="field-card"><label><span class="sensitive-dot"></span> VAT number</label>
+                <input id="profile-vat" name="vat" type="text" class="profile-input" value="{{ profile.vat }}" /></div>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="tabpanel" id="panel-address" role="tabpanel" aria-labelledby="tab-address" tabindex="0" hidden>
+            <div class="panel-head"><h3>Residential address</h3><span class="verified-mini"><i data-lucide="check-circle-2"></i> Verified</span></div>
+            <div class="field-grid">
+              <div class="field-card span-2"><label><span class="sensitive-dot"></span> Address</label>
+                <textarea id="profile-address" name="address" class="profile-input">{{ profile.address }}</textarea></div>
+              <div class="field-card"><label>Country (ISO alpha-2)</label>
+                <input id="profile-country" name="country" type="text" class="profile-input" maxlength="2" value="{{ profile.country }}" /></div>
+            </div>
+          </div>
+
+          <div class="panel-actions" style="padding:0 24px 24px;">
+            <button type="submit" class="button primary save-btn">Save changes</button>
+            <span id="profile-status" class="save-status"></span>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+
+      <!-- ── Activity log ─────────────────────────────────────────── -->
+      <div class="log-card">
+        <div class="log-header">
+          <h3>Access activity</h3>
+          <button type="button" class="log-clear" id="clearLogBtn">Clear</button>
+        </div>
+        <div id="log-panel">
+          {% for log in logs %}
+          <div class="request-bubble {% if log.success %}ok{% else %}fail{% endif %}"
+               data-request-id="{{ log.permyt_request_id }}">
+            <div class="bubble-scopes">{{ log.data.scopes|join:", " }}</div>
+            <div class="bubble-status">
+              <span class="status-text">{{ log.action }}</span>
+              <span class="entry-time">{{ log.updated_at|date:"H:i:s" }}</span>
+              <span class="badge {% if log.success %}success{% else %}error{% endif %}">
+                {% if log.success %}OK{% else %}FAIL{% endif %}
+              </span>
+            </div>
+          </div>
+          {% empty %}
+          <p class="empty-state" id="empty-state">No access requests yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% if is_business %}{{ shareholders|json_script:"stk-data" }}{% endif %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/tabs.js' %}"></script>
+<script src="{% static 'js/stakeholders.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

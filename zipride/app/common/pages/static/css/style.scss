@@ -1,0 +1,138 @@
+// ════════════════════════════════════════════════════════════════════
+// Zipride — operational, logistics-grade driver onboarding (light theme)
+// Palette: safety-orange #ff5a1f · go-green #0f9d58 · ink #14211b · neutral #f4f6f5
+// ════════════════════════════════════════════════════════════════════
+
+// ── Variables ──────────────────────────────────────────────────────
+$brand:        #ff5a1f;
+$brand-dark:   #e04500;
+$ink:           #14211b;
+$ink-soft:      #3d4a44;
+$ink-muted:     #6b7a72;
+$surface:       #ffffff;
+$surface-alt:   #f4f6f5;
+$border:        #dde3e0;
+$green:         #0f9d58;
+$green-soft:    #d4f3e0;
+$green-ink:     #0a6b3c;
+$amber:         #b45309;
+$amber-soft:    #fdebcf;
+$red:           #d92d20;
+
+$font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+$ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+
+$shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 2px 5px -1px rgba(50, 50, 93, 0.12), 0 1px 3px -1px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.06);
+$shadow-xl: 0 15px 35px rgba(50, 50, 93, 0.12), 0 5px 15px rgba(0, 0, 0, 0.07);
+
+// ── Reset ─────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overscroll-behavior: none; }
+
+body {
+  font-family: $font-family;
+  font-weight: 400;
+  line-height: 1.5;
+  color: $ink;
+  background: $surface;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: $brand; text-decoration: none; }
+img, svg { max-width: 100%; }
+img { display: block; }
+ul { list-style: none; }
+
+// ── Section system ────────────────────────────────────────────────
+.section {
+  width: 100%;
+  padding: #{"clamp(40px, 6vw, 96px)"} #{"clamp(16px, 4vw, 40px)"};
+}
+
+.wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ── Background utilities ──────────────────────────────────────────
+.bg-light { background: $surface;     color: $ink; }
+.bg-alt   { background: $surface-alt; color: $ink; }
+.bg-dark  { background: $surface;     color: $ink; } // legacy alias
+
+// ── Buttons ───────────────────────────────────────────────────────
+// The `hidden` attribute must win over component `display` rules (e.g. a
+// `.button[hidden]` would otherwise stay visible because `.button` sets display).
+[hidden] { display: none !important; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-family: $font-family;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 0.18s $ease-out, box-shadow 0.18s $ease-out, transform 0.18s $ease-out;
+  border: 1px solid transparent;
+  text-align: center;
+  white-space: nowrap;
+
+  i, svg { width: 18px; height: 18px; }
+  &:active { transform: translateY(1px); }
+  &:disabled { opacity: 0.55; cursor: default; transform: none; }
+
+  &.primary {
+    background: $brand;
+    color: #fff;
+    box-shadow: $shadow-sm;
+    &:hover:not(:disabled) { background: $brand-dark; box-shadow: $shadow-md; }
+  }
+
+  &.outline {
+    background: #fff;
+    color: $ink;
+    border-color: $border;
+    box-shadow: $shadow-sm;
+    &:hover { border-color: #cfd7df; box-shadow: $shadow-md; }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: $brand;
+    &:hover { background: rgba($brand, 0.07); }
+  }
+}
+
+// ── Fade-in with stagger cascade ─────────────────────────────────
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s $ease-out, transform 0.7s $ease-out;
+  transition-delay: calc(var(--stagger, 0) * 110ms);
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}
+
+// ── Typography ───────────────────────────────────────────────────
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.15; color: $ink; }
+h1 { letter-spacing: -0.025em; }
+h2 { letter-spacing: -0.02em; }
+
+.eyebrow {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $brand;
+}

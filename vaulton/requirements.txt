@@ -1,0 +1,21 @@
+# Our library
+permyt==0.1.6                       # Our PERMYT library
+
+# 3rd party libraries
+joserfc>=1.0.0                      # Library for cryptographic operations, JWT handling, and JWE encryption
+celery[redis]==5.6.3                # Background tasks queues with monitor
+channels[daphne]==4.3.2             # Django Channels for HTTP and WebSockets
+channels-redis==4.3.0               # Redis backend for Channels
+Django==6.0.4                       # Django framework
+django-axes==8.3.1                  # Brute force attack protection
+django-celery-beat==2.9.0           # Allows to schedule tasks for celery
+django-compressor==4.6.0            # Compresses linked and inline JS/CSS into cacheable files
+django-cors-headers==4.9.0          # Adds CORS (Cross-Origin Resource Sharing) headers to responses
+django-libsass==0.9                 # Sass compiler for django-compressor
+djangorestframework==3.17.1         # Django REST framework
+django-redis==6.0.0                 # Need for production, Used for redis-cache
+django-secured-fields==0.4.4        # Secured fields for Django models and forms
+ipython==9.12.0                     # Interactive computing shell
+psycopg[binary]==3.3.3              # PostgreSQL database adapter for the Python
+pytz==2026.1                        # Timezone definitions for Python
+qrcode==8.0                         # QR code generation (SVG output)

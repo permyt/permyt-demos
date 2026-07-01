@@ -1,0 +1,107 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero">
+  <div class="hero-inner">
+    <div class="hero-content fade-in" style="--stagger: 0">
+      <a href="{% url 'register' %}" class="back-link"><i data-lucide="arrow-left"></i> Back to registry</a>
+      <span class="eyebrow"><i data-lucide="badge-check"></i> {% if summary.type == 'business' %}Organisation record{% else %}Citizen record{% endif %}</span>
+      <h1>{{ summary.name }}</h1>
+      <p class="subheadline">
+        Authoritative {% if summary.type == 'business' %}organisation{% else %}citizen{% endif %} record held in the national registry.
+        Have the holder scan this code with their PERMYT identity app to link the record to their profile.
+      </p>
+
+      <div class="detail-grid">
+        {% for row in details %}
+        <div class="detail-card">
+          <span class="detail-label">{{ row.label }}</span>
+          <span class="detail-value">{{ row.value|default:"—" }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="hero-visual fade-in" style="--stagger: 1">
+      <div class="qr-card">
+        {% csrf_token %}
+        <div class="qr-title">Connect code</div>
+        <div class="qr-sub">Scan with the holder's PERMYT app</div>
+        <div id="qr-container">{{ qr_svg|safe }}</div>
+        <p id="status" class="{% if connected %}authenticated{% endif %}">
+          {% if connected %}
+            Linked to a PERMYT identity.
+          {% else %}
+            <span class="spinner"></span> Waiting for scan&hellip;
+          {% endif %}
+        </p>
+        <div class="qr-foot"><i data-lucide="badge-check"></i> Government-issued connect code</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var RECORD_ID = "{{ record_id }}";
+    var statusEl = document.getElementById("status");
+    if (statusEl && statusEl.classList.contains("authenticated")) return;
+
+    var csrfToken = (document.querySelector("[name=csrfmiddlewaretoken]") || {}).value || "";
+
+    // ── QR auto-refresh ──────────────────────────────────────────────
+    // The connect envelope expires after 5 min. Re-mint a fresh QR ~30 s
+    // before expiry so the displayed code stays scannable.
+    var qrRefreshTimer = null;
+
+    function scheduleQrRefresh(ttlSeconds) {
+      if (qrRefreshTimer) clearTimeout(qrRefreshTimer);
+      var ttl = (ttlSeconds || 300) * 1000;
+      var lead = Math.min(30000, Math.max(5000, Math.floor(ttl * 0.1)));
+      qrRefreshTimer = setTimeout(refreshQr, ttl - lead);
+    }
+
+    function stopQrRefresh() {
+      if (qrRefreshTimer) { clearTimeout(qrRefreshTimer); qrRefreshTimer = null; }
+    }
+
+    function refreshQr() {
+      fetch("{% url 'registration-qr-refresh' %}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+        body: JSON.stringify({ id: RECORD_ID }),
+      })
+        .then(function (res) {
+          if (!res.ok) { if (res.status !== 409) scheduleQrRefresh(30); return null; }
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data) return;
+          var container = document.getElementById("qr-container");
+          if (data.qr_svg && container) container.innerHTML = data.qr_svg;
+          scheduleQrRefresh(data.ttl_seconds);
+        })
+        .catch(function () { scheduleQrRefresh(30); });
+    }
+
+    scheduleQrRefresh();
+
+    var polling = setInterval(function () {
+      fetch("{% url 'registration-status' %}?id=" + encodeURIComponent(RECORD_ID))
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.status === "connected") {
+            clearInterval(polling);
+            stopQrRefresh();
+            statusEl.className = "authenticated";
+            statusEl.textContent = "Linked to a PERMYT profile.";
+          }
+        })
+        .catch(function () { /* keep polling */ });
+    }, 2000);
+  });
+</script>
+{% endblock %}

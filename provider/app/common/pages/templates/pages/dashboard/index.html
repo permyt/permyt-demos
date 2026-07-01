@@ -1,0 +1,66 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero bg-dark">
+  <div class="hero-inner">
+    <div class="hero-content fade-in" style="--stagger: 0">
+      <h1>NoteVault</h1>
+      <p class="subheadline">
+        Your secure notes. Each field is a separate PERMYT scope.
+      </p>
+      <div class="notes-grid">
+        {% for field in note_fields %}
+        <div class="note-card" data-field="{{ field.slug }}">
+          <div class="note-header">
+            <label>{{ field.name }}</label>
+            <span class="save-status"></span>
+            {% if is_superuser %}
+            <button type="button" class="delete-btn" title="Delete field">&times;</button>
+            {% endif %}
+          </div>
+          <textarea class="note-textarea">{{ field.value }}</textarea>
+          <button type="button" class="button primary save-btn">Save</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% if is_superuser %}
+      <div class="add-field-form">
+        <input type="text" id="new-field-name" placeholder="New field name" class="field-input" />
+        <button type="button" id="add-field-btn" class="button primary">Add Field</button>
+        <span id="add-field-status" class="save-status"></span>
+      </div>
+      {% endif %}
+    </div>
+    <div class="hero-visual fade-in" style="--stagger: 1">
+      <div class="log-card">
+        <div class="log-header">
+          <h3>Requests</h3>
+          <button type="button" class="log-clear" id="clearLogBtn">Clear</button>
+        </div>
+        <div id="log-panel">
+          {% for log in logs %}
+          <div class="request-bubble {% if log.success %}ok{% else %}fail{% endif %}"
+               data-request-id="{{ log.permyt_request_id }}">
+            <div class="bubble-scopes">{{ log.data.scopes|join:", " }}</div>
+            <div class="bubble-status">
+              <span class="status-text">{{ log.action }}</span>
+              <span class="entry-time">{{ log.updated_at|date:"H:i:s" }}</span>
+              <span class="badge {% if log.success %}success{% else %}error{% endif %}">
+                {% if log.success %}OK{% else %}FAIL{% endif %}
+              </span>
+            </div>
+          </div>
+          {% empty %}
+          <p class="empty-state" id="empty-state">No requests yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

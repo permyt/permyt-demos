@@ -1,0 +1,135 @@
+// ── Atlas — company data control panel ─────────────────────────────
+// Clean LIGHT admin theme: slate ink + amber accent + cool surfaces.
+$color-ink:        #1e293b;  // primary / slate
+$color-ink-soft:   #334155;
+$color-accent:     #f59e0b;  // amber
+$color-accent-dk:  #d97706;
+$color-surface:    #f8fafc;  // app background
+$color-surface-2:  #f1f5f9;
+$color-card:       #ffffff;
+$color-gray:       #64748b;  // cool gray (muted text)
+$color-gray-2:     #94a3b8;
+$color-border:     #e2e8f0;
+$color-border-str: #cbd5e1;
+$color-success:    #10b981;
+$color-danger:     #ef4444;
+
+$font-sans:   "Inter", "IBM Plex Sans", system-ui, sans-serif;
+$font-mono:   ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+$ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+$radius:      14px;
+$shadow-sm:   0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+$shadow-md:   0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+$shadow-lg:   0 12px 32px rgba(15, 23, 42, 0.10), 0 4px 8px rgba(15, 23, 42, 0.04);
+
+// ── Reset ─────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overscroll-behavior: none; }
+
+body {
+  font-family: $font-sans;
+  font-weight: 400;
+  line-height: 1.6;
+  color: $color-ink;
+  background: $color-surface;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+// ── Layout primitives ─────────────────────────────────────────────
+.wrapper {
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 #{"clamp(16px, 4vw, 40px)"};
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-family: $font-sans;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: all 0.2s $ease-out;
+  border: 1px solid transparent;
+  text-align: center;
+
+  i, svg { width: 16px; height: 16px; }
+
+  &:active { transform: translateY(1px); }
+
+  &.primary {
+    background: $color-ink;
+    color: #fff;
+    border-color: $color-ink;
+    box-shadow: $shadow-sm;
+    &:hover { background: $color-ink-soft; box-shadow: $shadow-md; transform: translateY(-1px); }
+  }
+
+  &.accent {
+    background: $color-accent;
+    color: #fff;
+    border-color: $color-accent;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.28);
+    &:hover { background: $color-accent-dk; border-color: $color-accent-dk; transform: translateY(-1px); }
+  }
+
+  &.outline {
+    background: $color-card;
+    color: $color-ink;
+    border-color: $color-border-str;
+    &:hover { border-color: $color-gray; background: $color-surface-2; }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: $color-gray;
+    border-color: transparent;
+    &:hover { background: $color-surface-2; color: $color-ink; }
+  }
+}
+
+// ── Fade-in with stagger cascade ─────────────────────────────────
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s $ease-out, transform 0.6s $ease-out;
+  transition-delay: calc(var(--stagger, 0) * 90ms);
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}
+
+// ── Typography ───────────────────────────────────────────────────
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; color: $color-ink; }
+h1 { letter-spacing: -0.025em; }
+h2 { letter-spacing: -0.02em; }
+h3 { letter-spacing: -0.01em; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-accent-dk;
+  margin-bottom: 14px;
+
+  i, svg { width: 14px; height: 14px; }
+}

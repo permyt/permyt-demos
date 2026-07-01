@@ -1,0 +1,27 @@
+from app import admin
+
+from .models import CompanyKB, LoginToken, User
+
+
+@admin.register(User)
+class UserAdmin(admin.AppModelAdmin):
+    list_display = ("email", "permyt_user_id", "is_account_manager", "created_at")
+    search_fields = ("email",)
+    list_filter = ("is_account_manager", "is_staff")
+
+
+@admin.register(CompanyKB)
+class CompanyKBAdmin(admin.AppModelAdmin):
+    list_display = ("name", "user", "created_at")
+    search_fields = ("name",)
+
+
+@admin.register(LoginToken)
+class LoginTokenAdmin(admin.AppModelAdmin):
+    list_display = ("short_token", "user", "logged_in", "created_at")
+    list_filter = ("logged_in",)
+    raw_id_fields = ("user", "session")
+
+    @admin.display(description="Token")
+    def short_token(self, obj):
+        return obj.token[:32] + "…" if len(obj.token) > 32 else obj.token

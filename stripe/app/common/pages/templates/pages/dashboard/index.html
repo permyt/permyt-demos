@@ -1,0 +1,121 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section onboard-shell">
+  <div class="onboard-inner">
+
+    <div class="onboard-head fade-in" style="--stagger: 0">
+      <div>
+        <div class="crumb">
+          <i data-lucide="building-2"></i>
+          Connect &nbsp;·&nbsp; Connected accounts &nbsp;·&nbsp; New
+        </div>
+        <h1>Add a company to {{ organization_name|default:"your platform" }}</h1>
+        <p class="onboard-sub">
+          We'll create a Stripe connected account using verified company data —
+          registry, tax, address, business profile and beneficial owners —
+          pulled <span class="via">via PERMYT</span> from the company's
+          authoritative sources. No documents required.
+        </p>
+      </div>
+      <div class="onboard-action">
+        {% csrf_token %}
+        <span class="onboard-live"><span class="spinner"></span> Verifying &amp; creating your account…</span>
+        <button type="button" id="retryBtn" class="button primary" hidden>
+          <i data-lucide="rotate-ccw"></i> Request again
+        </button>
+      </div>
+    </div>
+
+    <div class="onboard-grid">
+
+      <!-- LEFT: verified facts collected from sources -->
+      <div class="panel fade-in" style="--stagger: 1">
+        <div class="panel-title">
+          <i data-lucide="shield-check"></i> Verified company information
+        </div>
+
+        <div id="collected" class="collected-grid"></div>
+
+        <div id="collectedEmpty" class="collected-empty">
+          <i data-lucide="file-search"></i>
+          <div>Start onboarding to pull verified facts from the company's connected sources.</div>
+        </div>
+
+        <!-- RESULT: created connected account -->
+        <div id="result" class="result-card hidden">
+          <div class="result-head">
+            <span class="result-title">
+              <i data-lucide="check-circle-2"></i> Connected account created
+            </span>
+            <span class="badge success" id="resultBadge">
+              <i data-lucide="check"></i> Active
+            </span>
+          </div>
+          <div class="result-body">
+            <div class="result-row">
+              <span class="row-label">Account ID</span>
+              <code id="acctId" class="acct-id"></code>
+            </div>
+            <div class="result-row">
+              <span class="row-label">Capabilities</span>
+              <div class="cap-list">
+                <span class="cap-chip">card_payments</span>
+                <span class="cap-chip">transfers</span>
+              </div>
+            </div>
+            <div class="result-row">
+              <span class="row-label">Requirements</span>
+              <div id="requirements" class="requirements"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: onboarding progress -->
+      <div class="panel fade-in" style="--stagger: 2">
+        <div class="panel-title">
+          <i data-lucide="list-checks"></i> Onboarding progress
+        </div>
+        <ol class="stage-track" id="stageTrack">
+          <li data-stage="sent" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Request sent</span>
+          </li>
+          <li data-stage="approval" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Awaiting company approval on PERMYT</span>
+          </li>
+          <li data-stage="approved" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Approved by company</span>
+          </li>
+          <li data-stage="fetching" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Fetching verified facts from sources</span>
+          </li>
+          <li data-stage="pushing" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Creating Stripe connected account</span>
+          </li>
+          <li data-stage="done" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Account ready</span>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <footer class="app-footer">
+      <span class="footer-powered">
+        Powered by <span class="stripe-word">Stripe</span>
+      </span>
+      <span class="footer-permyt">Company data verified &amp; brokered via PERMYT — Stripe never sees the source documents.</span>
+    </footer>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.__permytUserId = "{{ permyt_user_id|escapejs }}";
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

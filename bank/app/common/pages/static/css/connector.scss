@@ -1,0 +1,725 @@
+// ── Meridian palette (mirrors style.scss) ─────────────────────────
+$color-emerald:    #0a5d3f;
+$color-emerald-d:  #074830;
+$color-emerald-dd: #053123;
+$color-mint:       #2fbf8f;
+$color-mint-soft:  #d7f3e7;
+$color-sand:       #c8a24a;
+$color-ink:        #0c1b14;
+$color-surface:    #f7f8f6;
+$color-white:      #ffffff;
+$color-muted:      #5b6b62;
+$color-line:       #e4e8e4;
+$color-red:        #d64545;
+$color-green:      #1f9d63;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+$radius-sm: 12px;
+$radius:    18px;
+$radius-lg: 26px;
+
+@mixin card {
+  background: $color-white;
+  border: 1px solid $color-line;
+  border-radius: $radius;
+  box-shadow: 0 1px 2px rgba($color-ink, 0.03), 0 12px 32px rgba($color-ink, 0.05);
+}
+
+// ━━━ BRAND MARK ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.brand-mark {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+
+  &.sm { width: 26px; height: 26px; }
+
+  svg { width: 100%; height: 100%; display: block; }
+
+  .mark-disc      { fill: $color-emerald; }
+  .mark-arc-mint  { stroke: $color-mint; }
+  .mark-arc-light { stroke: $color-surface; opacity: 0.92; }
+  .mark-dot       { fill: $color-sand; }
+}
+
+.brand-word {
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: -0.03em;
+  color: $color-ink;
+}
+
+// ━━━ NAVBAR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px #{"clamp(16px, 4vw, 40px)"};
+  background: rgba($color-surface, 0.82);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid rgba($color-ink, 0.06);
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .nav-logout-form { display: contents; }
+
+  .nav-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $color-muted;
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.2s;
+
+    &:hover { color: $color-emerald; }
+    svg { width: 16px; height: 16px; }
+  }
+
+  .connector-badge {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: $color-emerald;
+    background: $color-mint-soft;
+    padding: 7px 14px;
+    border-radius: 999px;
+  }
+}
+
+// ━━━ HERO / LANDING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.section.hero {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding-top: 96px;
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba($color-mint, 0.22), transparent 55%),
+    linear-gradient(160deg, $color-emerald 0%, $color-emerald-dd 100%);
+  color: $color-white;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba($color-white, 0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+    mask-image: linear-gradient(180deg, #000 0%, transparent 80%);
+  }
+
+  .hero-inner {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 40px #{"clamp(16px, 4vw, 40px)"};
+    gap: 64px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-content {
+    flex: 1 1 440px;
+
+    .eyebrow { color: $color-mint; margin-bottom: 20px; }
+
+    h1 {
+      font-size: #{"clamp(38px, 4.6vw + 10px, 68px)"};
+      font-weight: 800;
+      margin-bottom: 22px;
+      line-height: 1.02;
+
+      .accent { color: $color-mint; }
+    }
+
+    .subheadline {
+      font-size: #{"clamp(16px, 0.7vw + 13px, 19px)"};
+      font-weight: 400;
+      max-width: 500px;
+      margin-bottom: 36px;
+      color: rgba($color-white, 0.78);
+      line-height: 1.7;
+    }
+
+    .hero-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 22px;
+      margin-bottom: 8px;
+
+      li {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba($color-white, 0.85);
+        i, svg { width: 17px; height: 17px; color: $color-mint; }
+      }
+    }
+  }
+
+  .hero-visual {
+    flex: 1 1 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+}
+
+// ━━━ QR / CONNECT CARD ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.qr-card {
+  background: $color-white;
+  border-radius: $radius-lg;
+  padding: 32px;
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 30px 70px rgba($color-emerald-dd, 0.4);
+  color: $color-ink;
+
+  .qr-card-head {
+    margin-bottom: 20px;
+
+    .step {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: $color-mint;
+    }
+    h3 {
+      font-size: 20px;
+      margin-top: 6px;
+      color: $color-ink;
+    }
+    p {
+      font-size: 14px;
+      color: $color-muted;
+      margin-top: 6px;
+    }
+  }
+
+  #qr-container {
+    display: inline-block;
+    padding: 14px;
+    background: $color-surface;
+    border: 1px solid $color-line;
+    border-radius: 16px;
+    margin-bottom: 18px;
+
+    svg { width: 280px; height: 280px; display: block; }
+  }
+
+  #status {
+    font-size: 14px;
+    font-weight: 500;
+    color: $color-muted;
+    min-height: 20px;
+
+    &.authenticated { color: $color-green; font-weight: 700; }
+    &.error { color: $color-red; font-weight: 600; }
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba($color-emerald, 0.18);
+  border-top-color: $color-emerald;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ━━━ FEATURE STRIP (landing) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.section.features {
+  background: $color-surface;
+  padding: #{"clamp(56px, 8vw, 100px)"} #{"clamp(16px, 4vw, 40px)"};
+}
+
+.features-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+
+  .features-head {
+    max-width: 620px;
+    margin-bottom: 48px;
+
+    h2 { font-size: #{"clamp(26px, 2.4vw + 8px, 40px)"}; margin-bottom: 14px; }
+    p  { color: $color-muted; font-size: 17px; }
+  }
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature {
+  @include card;
+  padding: 28px;
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: $color-mint-soft;
+    color: $color-emerald;
+    margin-bottom: 18px;
+    i, svg { width: 22px; height: 22px; }
+  }
+
+  h3 { font-size: 18px; margin-bottom: 8px; }
+  p  { color: $color-muted; font-size: 15px; line-height: 1.6; }
+}
+
+// ━━━ DASHBOARD ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.section.bank-dashboard {
+  min-height: 100dvh;
+  background: $color-surface;
+  padding: 108px #{"clamp(16px, 4vw, 40px)"} 64px;
+
+  .bank-inner {
+    max-width: 940px;
+    margin: 0 auto;
+    display: grid;
+    gap: 22px;
+  }
+}
+
+.dash-greeting {
+  margin-bottom: 4px;
+
+  .eyebrow { color: $color-emerald; margin-bottom: 8px; }
+  h1 { font-size: #{"clamp(26px, 2.5vw + 8px, 38px)"}; }
+  p  { color: $color-muted; margin-top: 6px; font-size: 15px; }
+}
+
+.bank-eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $color-muted;
+  margin-bottom: 8px;
+}
+
+// Account / balance card — emerald gradient, big numerals
+.account-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  padding: 30px 32px;
+  color: $color-white;
+  background:
+    radial-gradient(120% 130% at 90% -20%, rgba($color-mint, 0.32), transparent 55%),
+    linear-gradient(150deg, $color-emerald 0%, $color-emerald-dd 100%);
+  box-shadow: 0 18px 44px rgba($color-emerald-dd, 0.32);
+
+  .account-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+
+  .account-holder {
+    .account-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba($color-white, 0.6);
+      margin-bottom: 8px;
+      display: block;
+    }
+  }
+
+  .holder-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  // Account-holder name — gov-verified via PERMYT, rendered as static text.
+  .account-name {
+    color: $color-white;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 11px 5px 9px;
+    border-radius: 999px;
+    background: rgba($color-mint, 0.18);
+    color: $color-mint;
+    border: 1px solid rgba($color-mint, 0.4);
+    white-space: nowrap;
+    i, svg { width: 14px; height: 14px; }
+  }
+
+  .account-address {
+    font-size: 14px;
+    color: rgba($color-white, 0.74);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    i, svg { width: 15px; height: 15px; opacity: 0.7; }
+  }
+
+  .account-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: rgba($color-white, 0.7);
+    .brand-mark { filter: drop-shadow(0 1px 4px rgba(0,0,0,0.25)); }
+  }
+
+  .balance-block {
+    .bank-eyebrow { color: rgba($color-white, 0.6); }
+  }
+
+  .balance-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .balance-amount {
+    font-size: #{"clamp(40px, 6vw, 60px)"};
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .balance-currency {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba($color-white, 0.6);
+    letter-spacing: 0.04em;
+  }
+
+  .account-iban {
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid rgba($color-white, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    .iban-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba($color-white, 0.55);
+    }
+    .iban-value {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      color: $color-white;
+    }
+  }
+}
+
+// ━━━ ONBOARDING SCREEN (identity fetch, first login) ━━━━━━━━━━━━━━
+.section.onboarding-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 108px #{"clamp(16px, 4vw, 40px)"} 64px;
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba($color-mint, 0.16), transparent 55%),
+    $color-surface;
+}
+
+.onboarding-card {
+  @include card;
+  width: 100%;
+  max-width: 480px;
+  padding: 48px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .onboarding-mark {
+    display: inline-flex;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 26px;
+    filter: drop-shadow(0 6px 18px rgba($color-emerald-dd, 0.22));
+    svg { width: 100%; height: 100%; display: block; }
+    .mark-disc      { fill: $color-emerald; }
+    .mark-arc-mint  { stroke: $color-mint; }
+    .mark-arc-light { stroke: $color-surface; opacity: 0.92; }
+    .mark-dot       { fill: $color-sand; }
+  }
+
+  .onboarding-spinner {
+    width: 38px;
+    height: 38px;
+    border: 3px solid rgba($color-emerald, 0.16);
+    border-top-color: $color-emerald;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: #{"clamp(22px, 2vw + 10px, 28px)"};
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: $color-ink;
+    margin-bottom: 10px;
+  }
+
+  .onboarding-sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: $color-muted;
+    max-width: 360px;
+  }
+
+  &.is-error {
+    border-left: 4px solid $color-red;
+    h1 { color: $color-red; }
+  }
+}
+
+// Movements
+.bank-movements {
+  @include card;
+  padding: 24px 26px;
+}
+
+.bank-movements-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $color-muted;
+  }
+}
+
+.bank-movements-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.movement {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+  border-bottom: 1px solid $color-line;
+
+  &:last-child { border-bottom: none; }
+
+  .movement-icon {
+    flex: none;
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-surface;
+    color: $color-muted;
+    i, svg { width: 19px; height: 19px; }
+  }
+
+  .movement-main { flex: 1; min-width: 0; }
+
+  .movement-counterparty {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: $color-ink;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .movement-reference {
+    font-size: 12.5px;
+    color: $color-muted;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .movement-side { text-align: right; flex: none; }
+
+  .movement-amount {
+    font-size: 14.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .movement-date {
+    font-size: 11.5px;
+    color: $color-muted;
+    margin-top: 2px;
+  }
+
+  &.credit {
+    .movement-amount { color: $color-green; }
+    .movement-icon { background: $color-mint-soft; color: $color-emerald; }
+  }
+  &.debit .movement-amount { color: $color-ink; }
+
+  &.empty {
+    display: block;
+    text-align: center;
+    padding: 36px 0;
+    color: $color-muted;
+    font-size: 14px;
+    border-bottom: none;
+  }
+}
+
+// ━━━ FOOTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.site-footer {
+  background: $color-emerald-dd;
+  color: rgba($color-white, 0.7);
+  padding: 48px #{"clamp(16px, 4vw, 40px)"};
+
+  .footer-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    .brand-word { color: $color-white; font-size: 18px; }
+    .mark-arc-light { stroke: rgba($color-white, 0.85); }
+  }
+
+  .footer-copy { font-size: 13.5px; }
+  .footer-permyt {
+    font-size: 13px;
+    color: rgba($color-white, 0.5);
+    strong { color: $color-mint; font-weight: 700; }
+  }
+}
+
+// ━━━ RESPONSIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@media (max-width: 900px) {
+  .feature-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .section.hero {
+    padding-top: 84px;
+    .hero-inner { gap: 40px; }
+    .hero-content { flex-basis: 100%; }
+    .hero-visual { flex-basis: 100%; }
+  }
+  .qr-card { max-width: 100%; }
+  .navbar .connector-badge { display: none; }
+  .account-card .account-iban { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+.onboarding-retry {
+  margin-top: 22px;
+  width: auto;
+}
+
+// ── Account-type toggle (login) ────────────────────────────────────
+.acct-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.acct-opt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid rgba(10, 93, 63, 0.18);
+  border-radius: 12px;
+  background: #fff;
+  color: $color-emerald-d;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s $ease-out;
+
+  i, svg { width: 16px; height: 16px; }
+  &:hover { border-color: $color-emerald; background: rgba(10, 93, 63, 0.04); }
+  &.active {
+    background: $color-emerald;
+    border-color: $color-emerald;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(10, 93, 63, 0.22);
+  }
+}

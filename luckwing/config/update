@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+update_app()
+{
+    cd /var/deployments/demo/luckwing
+    git pull
+    source env/bin/activate
+    pip install -r requirements.txt
+    python manage.py migrate
+    python manage.py collectstatic --noinput
+    sudo supervisorctl restart demo_luckwing_app:* demo_luckwing_beat demo_luckwing_tasks
+}
+
+update_app

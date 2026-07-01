@@ -1,0 +1,124 @@
+// ── Sentinel Screening — Watchlist & Compliance Authority ──────────
+// Austere monochrome "registry" theme: near-black ink on warm paper,
+// hairline rules, a single restrained steel accent. Compliance states
+// (clear / flagged) are the only colour, kept desaturated.
+$color-ink:      #14161a; // near-black (headings, ink bands)
+$color-ink-2:    #2b2f36; // softer ink
+$color-accent:   #3a4a5a; // single restrained steel accent
+$color-accent-d: #29353f; // darker steel (hover)
+$color-surface:  #ffffff; // card / panel surface
+$color-bg:       #f3f2ee; // warm paper background
+$color-line:     #d8d6cf; // hairline borders
+$color-text:     #2a2c31; // body text
+$color-muted:    #71747c; // secondary text
+$color-clear:    #3f6b53; // "clear" / negative screening result
+$color-flag:     #8c3a2f; // "flagged" / positive screening result
+
+$font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+$ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+
+// ── Reset ─────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overscroll-behavior: none; }
+
+body {
+  font-family: $font-sans;
+  font-weight: 400;
+  line-height: 1.6;
+  color: $color-text;
+  background: $color-bg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+// ── Section system ────────────────────────────────────────────────
+.section {
+  width: 100%;
+  padding: #{"clamp(40px, 7vw, 96px)"} #{"clamp(16px, 4vw, 40px)"};
+}
+
+.wrapper {
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ── Background utilities ──────────────────────────────────────────
+.bg-paper   { background: $color-bg;      color: $color-text; }
+.bg-surface { background: $color-surface; color: $color-text; }
+.bg-ink     { background: $color-ink;     color: #fff; }
+
+// ── Buttons ───────────────────────────────────────────────────────
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 26px;
+  border-radius: 2px;
+  font-family: $font-sans;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.18s $ease-out;
+  border: 1.5px solid transparent;
+  text-align: center;
+
+  i, svg { width: 17px; height: 17px; }
+
+  &:active { transform: translateY(1px); }
+
+  &.primary {
+    background: $color-ink;
+    color: #fff;
+    border-color: $color-ink;
+    &:hover { background: $color-accent-d; border-color: $color-accent-d; }
+  }
+
+  &.outline {
+    background: $color-surface;
+    color: $color-ink;
+    border-color: $color-line;
+    &:hover { border-color: $color-ink; }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: $color-ink;
+    border-color: transparent;
+    &:hover { background: rgba($color-ink, 0.05); }
+  }
+}
+
+// ── Fade-in with stagger cascade ─────────────────────────────────
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s $ease-out, transform 0.7s $ease-out;
+  transition-delay: calc(var(--stagger, 0) * 100ms);
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}
+
+// ── Typography ───────────────────────────────────────────────────
+h1, h2, h3, h4 {
+  font-family: $font-sans;
+  font-weight: 600;
+  line-height: 1.14;
+  color: $color-ink;
+  letter-spacing: -0.015em;
+}
+
+.section-header {
+  font-size: #{"clamp(24px, 2.5vw + 8px, 40px)"};
+  margin-bottom: #{"clamp(28px, 4vw, 56px)"};
+}
+
+.hidden { display: none !important; }

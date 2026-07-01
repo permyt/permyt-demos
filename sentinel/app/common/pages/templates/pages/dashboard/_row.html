@@ -1,0 +1,14 @@
+{% load static %}
+<div class="screening-row">
+  <div class="scr-meta">
+    <div class="scr-name">{{ name }}</div>
+    <div class="scr-ref">{{ reference }}</div>
+  </div>
+  <span class="scr-result" data-result-for="{{ field }}" data-flagged="{% if value %}true{% else %}false{% endif %}">
+    <span class="dot"></span>{% if value %}Yes{% else %}No{% endif %}
+  </span>
+  <label class="toggle" title="Flip this screening result">
+    <input type="checkbox" class="screening-toggle" data-field="{{ field }}" {% if value %}checked{% endif %}>
+    <span class="track"></span>
+  </label>
+</div>

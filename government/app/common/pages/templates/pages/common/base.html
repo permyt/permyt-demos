@@ -1,0 +1,61 @@
+{% load compress %}{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b3d91">
+  <title>{{ title }}</title>
+
+  <!-- Fonts: serif headings (Source Serif 4) + sans body (Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  {% compress css %}
+  <link rel="stylesheet" type="text/x-scss" href="{% static 'css/style.scss' %}">
+  <link rel="stylesheet" type="text/x-scss" href="{% static 'css/connector.scss' %}">
+  {% block css %}{% endblock %}
+  {% endcompress %}
+</head>
+<body>
+
+  {% include "pages/common/navbar.html" %}
+
+  {% block body %}{% endblock %}
+
+  <footer class="gov-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg class="crest" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2 5 6v9c0 7 4.6 12 11 15 6.4-3 11-8 11-15V6L16 2Z" fill="#0b3d91" stroke="#c9a227" stroke-width="1"/>
+          <path d="M16 9.5 17.6 14h4.7l-3.8 2.8 1.4 4.5L16 18.6 12.1 21.3l1.4-4.5L9.7 14h4.7L16 9.5Z" fill="#fff"/>
+        </svg>
+        <span class="footer-name">Gov.ID</span>
+      </div>
+      <nav class="footer-links">
+        <a href="#">Accessibility</a>
+        <a href="#">Privacy notice</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+    <div class="footer-note">
+      <span>&copy; National Digital Identity Service. An official government identity portal.</span>
+      <span class="permyt-attr">Identity verification powered by PERMYT.</span>
+    </div>
+  </footer>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  {% block js_vendor %}{% endblock %}
+
+  {% compress js %}
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block js %}{% endblock %}
+  {% endcompress %}
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

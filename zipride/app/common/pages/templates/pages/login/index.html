@@ -1,0 +1,124 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero">
+  <div class="hero-inner">
+    <div class="hero-content fade-in" style="--stagger: 0">
+      <span class="eyebrow">{{ organization_name|default:"Zipride" }} · Drive &amp; deliver</span>
+      <h1 style="margin-top:14px">Get approved to drive. Start earning this week.</h1>
+      <p class="subheadline">
+        One scan with PERMYT and {{ organization_name|default:"Zipride" }} confirms what it needs
+        straight from the source — no forms, no photos of your documents, no waiting on uploads.
+      </p>
+      <ul class="hero-points">
+        <li>
+          <span class="tick"><i data-lucide="check"></i></span>
+          <span><strong>Your identity.</strong> Confirmed directly by the national identity service — not from a snapshot you upload.</span>
+        </li>
+        <li>
+          <span class="tick"><i data-lucide="check"></i></span>
+          <span><strong>Your right to work.</strong> Confirmed at the source, so you're cleared to start earning.</span>
+        </li>
+        <li>
+          <span class="tick"><i data-lucide="check"></i></span>
+          <span><strong>Your driving licence.</strong> The licence authority confirms it's valid with no disqualifications — straight from them, so there's nothing to forge.</span>
+        </li>
+        <li>
+          <span class="tick"><i data-lucide="check"></i></span>
+          <span><strong>You stay in control.</strong> You approve exactly what you share, right on your device, via PERMYT.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="hero-visual fade-in" style="--stagger: 1">
+      <div class="qr-card">
+        {% csrf_token %}
+        <p class="qr-card-head">Start your sign-up</p>
+        <p class="qr-card-sub">Scan with your PERMYT app to get road-ready.</p>
+        <div id="qr-container">{{ qr_svg|safe }}</div>
+        <p id="status"><span class="spinner"></span> Waiting for scan&hellip;</p>
+        <div class="powered-by">
+          <span class="brand-word">{{ organization_name|default:"Zipride" }}</span>
+          · Answered directly via <span class="permyt-word">PERMYT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var LOGIN_ID = "{{ login_id }}";
+    var csrfToken = (document.querySelector("[name=csrfmiddlewaretoken]") || {}).value || "";
+
+    // ── QR auto-refresh ──────────────────────────────────────────────
+    // The connect envelope expires after 5 min. Re-mint a fresh QR ~30 s
+    // before expiry so the displayed code stays scannable.
+    var qrRefreshTimer = null;
+
+    function scheduleQrRefresh(ttlSeconds) {
+      if (qrRefreshTimer) clearTimeout(qrRefreshTimer);
+      var ttl = (ttlSeconds || 300) * 1000;
+      var lead = Math.min(30000, Math.max(5000, Math.floor(ttl * 0.1)));
+      qrRefreshTimer = setTimeout(refreshQr, ttl - lead);
+    }
+
+    function stopQrRefresh() {
+      if (qrRefreshTimer) { clearTimeout(qrRefreshTimer); qrRefreshTimer = null; }
+    }
+
+    function refreshQr() {
+      fetch("{% url 'login-qr-refresh' %}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+        body: JSON.stringify({ id: LOGIN_ID }),
+      })
+        .then(function (res) {
+          if (!res.ok) { if (res.status !== 409) scheduleQrRefresh(30); return null; }
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data) return;
+          var container = document.getElementById("qr-container");
+          if (data.qr_svg && container) container.innerHTML = data.qr_svg;
+          scheduleQrRefresh(data.ttl_seconds);
+        })
+        .catch(function () { scheduleQrRefresh(30); });
+    }
+
+    scheduleQrRefresh();
+
+    var polling = setInterval(function () {
+      fetch("{% url 'login-status' %}?id=" + encodeURIComponent(LOGIN_ID))
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { status: res.status, data: data };
+          });
+        })
+        .then(function (result) {
+          if (result.data.status === "authenticated") {
+            clearInterval(polling);
+            stopQrRefresh();
+            var el = document.getElementById("status");
+            el.className = "authenticated";
+            el.textContent = "Authenticated! Redirecting\u2026";
+            setTimeout(function () {
+              window.location.href = "/";
+            }, 500);
+          } else if (result.status >= 400) {
+            clearInterval(polling);
+            stopQrRefresh();
+            var el = document.getElementById("status");
+            el.className = "error";
+            el.textContent = result.data.error || "Login failed.";
+          }
+        })
+        .catch(function () {
+          // Network error — keep polling
+        });
+    }, 2000);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero">
+  <div class="hero-inner">
+    <div class="hero-content fade-in" style="--stagger: 0">
+      <span class="eyebrow">Meridian &mdash; banking, on your terms</span>
+      <h1>Open an account in<br><span class="accent">under a minute.</span></h1>
+      <p class="subheadline">
+        No paperwork, no photos of your passport, no data you didn't agree to share.
+        Scan once with PERMYT and your verified identity opens your account &mdash;
+        you approve exactly what we see.
+      </p>
+      <ul class="hero-points">
+        <li><i data-lucide="shield-check"></i> Identity verified, not harvested</li>
+        <li><i data-lucide="zap"></i> Instant onboarding</li>
+        <li><i data-lucide="lock"></i> You hold the keys</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual fade-in" style="--stagger: 1">
+      <div class="qr-card">
+        {% csrf_token %}
+        <div class="qr-card-head">
+          <span class="step">Step 1 of 1</span>
+          <h3>Open your account</h3>
+          <p>Choose an account type, then scan with your PERMYT app.</p>
+        </div>
+        <div class="acct-choice" role="tablist" aria-label="Account type">
+          <a class="acct-opt {% if profile_type != 'business' %}active{% endif %}"
+             href="?as=person" role="tab" aria-selected="{% if profile_type != 'business' %}true{% else %}false{% endif %}">
+            <i data-lucide="user-round"></i> Personal
+          </a>
+          <a class="acct-opt {% if profile_type == 'business' %}active{% endif %}"
+             href="?as=business" role="tab" aria-selected="{% if profile_type == 'business' %}true{% else %}false{% endif %}">
+            <i data-lucide="building-2"></i> Business
+          </a>
+        </div>
+        <div id="qr-container">{{ qr_svg|safe }}</div>
+        <p id="status"><span class="spinner"></span> Waiting for scan&hellip;</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section features">
+  <div class="features-inner">
+    <div class="features-head fade-in" style="--stagger: 0">
+      <h2>A bank that asks before it knows.</h2>
+      <p>Meridian runs on PERMYT, so your personal details stay yours. We request only
+         what we need to open your account &mdash; and only when you approve it.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature fade-in" style="--stagger: 1">
+        <span class="feature-icon"><i data-lucide="badge-check"></i></span>
+        <h3>Verified identity</h3>
+        <p>Your legal name, address, and date of birth come straight from a trusted
+           provider &mdash; accurate, instant, and never typed twice.</p>
+      </div>
+      <div class="feature fade-in" style="--stagger: 2">
+        <span class="feature-icon"><i data-lucide="sliders-horizontal"></i></span>
+        <h3>Consent you control</h3>
+        <p>Every request appears on your phone. Approve, deny, or revoke any time.
+           Nothing moves without your tap.</p>
+      </div>
+      <div class="feature fade-in" style="--stagger: 3">
+        <span class="feature-icon"><i data-lucide="eye-off"></i></span>
+        <h3>Zero data hoarding</h3>
+        <p>We keep your account details &mdash; nothing more. PERMYT brokers the rest
+           with encryption we never see through.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var LOGIN_ID = "{{ login_id }}";
+    var csrfToken = (document.querySelector("[name=csrfmiddlewaretoken]") || {}).value || "";
+
+    // ── Scroll reveal ───────────────────────────────────────────────
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("visible"); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll(".fade-in").forEach(function (el) { io.observe(el); });
+
+    // ── QR auto-refresh ─────────────────────────────────────────────
+    // The connect envelope expires after 5 min. Re-mint a fresh QR ~30 s
+    // before expiry so the displayed code stays scannable.
+    var qrRefreshTimer = null;
+
+    function scheduleQrRefresh(ttlSeconds) {
+      if (qrRefreshTimer) clearTimeout(qrRefreshTimer);
+      var ttl = (ttlSeconds || 300) * 1000;
+      var lead = Math.min(30000, Math.max(5000, Math.floor(ttl * 0.1)));
+      qrRefreshTimer = setTimeout(refreshQr, ttl - lead);
+    }
+
+    function stopQrRefresh() {
+      if (qrRefreshTimer) { clearTimeout(qrRefreshTimer); qrRefreshTimer = null; }
+    }
+
+    function refreshQr() {
+      fetch("{% url 'login-qr-refresh' %}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+        body: JSON.stringify({ id: LOGIN_ID }),
+      })
+        .then(function (res) {
+          if (!res.ok) { if (res.status !== 409) scheduleQrRefresh(30); return null; }
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data) return;
+          var container = document.getElementById("qr-container");
+          if (data.qr_svg && container) container.innerHTML = data.qr_svg;
+          scheduleQrRefresh(data.ttl_seconds);
+        })
+        .catch(function () { scheduleQrRefresh(30); });
+    }
+
+    scheduleQrRefresh();
+
+    var polling = setInterval(function () {
+      fetch("{% url 'login-status' %}?id=" + encodeURIComponent(LOGIN_ID))
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { status: res.status, data: data };
+          });
+        })
+        .then(function (result) {
+          if (result.data.status === "authenticated") {
+            clearInterval(polling);
+            stopQrRefresh();
+            var el = document.getElementById("status");
+            el.className = "authenticated";
+            el.textContent = "Account opened! Redirecting…";
+            setTimeout(function () {
+              window.location.href = "/";
+            }, 500);
+          } else if (result.status >= 400) {
+            clearInterval(polling);
+            stopQrRefresh();
+            var el = document.getElementById("status");
+            el.className = "error";
+            el.textContent = result.data.error || "Login failed.";
+          }
+        })
+        .catch(function () {
+          // Network error — keep polling
+        });
+    }, 2000);
+  });
+</script>
+{% endblock %}

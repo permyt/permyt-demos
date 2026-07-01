@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+update_app()
+{
+    cd /var/deployments/demo/requester
+    git pull
+    source env/bin/activate
+    pip install -r requirements.txt
+    python manage.py migrate
+    python manage.py collectstatic --noinput
+    sudo supervisorctl restart demo_requester_app:* demo_requester_beat demo_requester_tasks
+}
+
+update_app

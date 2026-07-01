@@ -1,0 +1,73 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero" style="min-height:auto;display:block;padding-bottom:64px;">
+  <div class="wrapper" style="position:relative;z-index:1;">
+    <div class="dash-head fade-in" style="--stagger: 0">
+      <div class="dash-title">
+        <span class="eyebrow"><i data-lucide="shield"></i> Screening record</span>
+        <h1>Your screening record</h1>
+        <p>
+          Sentinel answers these checks directly when a regulated party requests
+          them — only with your explicit consent on the PERMYT app. Flip a result
+          below to model how a flagged subject would be answered.
+        </p>
+      </div>
+      <span class="source-seal"><i data-lucide="shield-check"></i> Authoritative source</span>
+    </div>
+
+    <div class="dash-grid fade-in" style="--stagger: 1">
+      <!-- ── Screening record ──────────────────────────────────────── -->
+      <div class="record-card">
+        <div class="record-head">
+          <h3>Watchlist &amp; compliance checks</h3>
+          <span class="source-seal"><i data-lucide="database"></i> On register</span>
+        </div>
+
+        <div class="screening-list" id="screening-list">
+          {% include "pages/dashboard/_row.html" with field="sanctions_match" name="Sanctions match" reference="sanctions.check" value=screening.sanctions_match %}
+          {% include "pages/dashboard/_row.html" with field="pep" name="Politically exposed person" reference="pep.check" value=screening.pep %}
+          {% include "pages/dashboard/_row.html" with field="adverse_media" name="Adverse media" reference="adverse_media.check" value=screening.adverse_media %}
+          {% include "pages/dashboard/_row.html" with field="self_excluded" name="Self-excluded" reference="self_exclusion.check" value=screening.self_excluded %}
+        </div>
+
+        <div class="record-foot">
+          <i data-lucide="info"></i>
+          <span>Changes are saved immediately to the register.</span>
+          <span id="profile-status" class="save-status"></span>
+        </div>
+      </div>
+
+      <!-- ── Activity log ─────────────────────────────────────────── -->
+      <div class="log-card">
+        <div class="log-header">
+          <h3>Access activity</h3>
+          <button type="button" class="log-clear" id="clearLogBtn">Clear</button>
+        </div>
+        <div id="log-panel">
+          {% for log in logs %}
+          <div class="request-bubble {% if log.success %}ok{% else %}fail{% endif %}"
+               data-request-id="{{ log.permyt_request_id }}">
+            <div class="bubble-scopes">{{ log.data.scopes|join:", " }}</div>
+            <div class="bubble-status">
+              <span class="status-text">{{ log.action }}</span>
+              <span class="entry-time">{{ log.updated_at|date:"H:i:s" }}</span>
+              <span class="badge {% if log.success %}success{% else %}error{% endif %}">
+                {% if log.success %}OK{% else %}FAIL{% endif %}
+              </span>
+            </div>
+          </div>
+          {% empty %}
+          <p class="empty-state" id="empty-state">No access requests yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

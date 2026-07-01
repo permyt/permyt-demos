@@ -1,0 +1,61 @@
+{% load compress %}{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14161a">
+  <title>{{ title }}</title>
+
+  <!-- Fonts: IBM Plex Sans (body/headings) + IBM Plex Mono (data/labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  {% compress css %}
+  <link rel="stylesheet" type="text/x-scss" href="{% static 'css/style.scss' %}">
+  <link rel="stylesheet" type="text/x-scss" href="{% static 'css/connector.scss' %}">
+  {% block css %}{% endblock %}
+  {% endcompress %}
+</head>
+<body>
+
+  {% include "pages/common/navbar.html" %}
+
+  {% block body %}{% endblock %}
+
+  <footer class="gov-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 3 6 6.5v8c0 6.6 4.2 11.3 10 13.5 5.8-2.2 10-6.9 10-13.5v-8L16 3Z" fill="none" stroke="#ffffff" stroke-width="1.4"/>
+          <path d="M11.5 16.2 14.6 19.3 20.8 12.5" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="square"/>
+        </svg>
+        <span class="footer-name">Sentinel</span>
+      </div>
+      <nav class="footer-links">
+        <a href="#">Methodology</a>
+        <a href="#">Data sources</a>
+        <a href="#">Compliance</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+    <div class="footer-note">
+      <span>&copy; Sentinel Screening — watchlist &amp; compliance authority. An authoritative screening register.</span>
+      <span class="permyt-attr">Screening answers are delivered with source-direct provenance via PERMYT — the authoritative source answers each check directly.</span>
+    </div>
+  </footer>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  {% block js_vendor %}{% endblock %}
+
+  {% compress js %}
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block js %}{% endblock %}
+  {% endcompress %}
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

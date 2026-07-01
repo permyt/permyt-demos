@@ -1,0 +1,17 @@
+# Normalise line endings so the repo is consistent across macOS/Linux/Windows.
+* text=auto eol=lf
+
+# Keep shell scripts and Python LF-terminated (they run on the server).
+*.sh   text eol=lf
+*.py   text eol=lf
+config/update text eol=lf
+
+# Binary assets — never diff or line-ending-mangle.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.pem  binary

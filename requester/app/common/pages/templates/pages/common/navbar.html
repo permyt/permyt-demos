@@ -1,0 +1,19 @@
+{% load static %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <img src="{% static 'logos/logo-light.svg' %}" alt="PERMYT" class="logo">
+    <img src="{% static 'logos/text-light.svg' %}" alt="PERMYT" class="text">
+  </a>
+  <div class="nav-right">
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" class="nav-logout-form">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout">
+        <i data-lucide="log-out"></i>
+        Logout
+      </button>
+    </form>
+    {% endif %}
+    <span class="connector-badge">Requester</span>
+  </div>
+</nav>

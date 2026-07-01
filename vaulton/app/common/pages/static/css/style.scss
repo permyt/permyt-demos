@@ -1,0 +1,149 @@
+// ════════════════════════════════════════════════════════════════════
+// Vaulton — sleek dark-mode crypto-asset exchange
+// Palette: near-black navy #0b0f1a · electric violet #8b5cf6 · cyan #22d3ee
+// Confident, minimal, fast. "Trade in minutes."
+// ════════════════════════════════════════════════════════════════════
+
+// ── Variables ──────────────────────────────────────────────────────
+$violet:        #8b5cf6;
+$violet-bright: #a78bfa;
+$cyan:          #22d3ee;
+$accent:        $violet;
+$accent-grad:   linear-gradient(135deg, #8b5cf6 0%, #22d3ee 100%);
+
+$bg:            #0b0f1a;   // page background
+$surface:       #121829;   // panels / cards
+$surface-alt:   #0e1424;   // insets, recessed wells
+$surface-2:     #182039;   // raised chips
+$border:        #232c47;   // hairline borders
+$border-soft:   #1a2238;
+
+$ink:           #eef2fb;   // primary text
+$ink-soft:      #b6c0d6;   // secondary text
+$ink-muted:     #7e889e;   // tertiary / labels
+
+$green:         #34d399;
+$green-soft:    rgba(52, 211, 153, 0.14);
+$green-ink:     #6ee7b7;
+$amber:         #fbbf24;
+$amber-soft:    rgba(251, 191, 36, 0.15);
+$red:           #f87171;
+
+$font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+$ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+$shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+$shadow-lg: 0 12px 34px rgba(0, 0, 0, 0.5);
+$shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03);
+$glow:      0 0 0 1px rgba(139, 92, 246, 0.35), 0 8px 30px rgba(139, 92, 246, 0.22);
+
+// ── Reset ─────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overscroll-behavior: none; }
+
+body {
+  font-family: $font-family;
+  font-weight: 400;
+  line-height: 1.5;
+  color: $ink;
+  background: $bg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: $violet-bright; text-decoration: none; }
+img, svg { max-width: 100%; }
+img { display: block; }
+ul { list-style: none; }
+
+// ── Section system ────────────────────────────────────────────────
+.section {
+  width: 100%;
+  padding: #{"clamp(40px, 6vw, 96px)"} #{"clamp(16px, 4vw, 40px)"};
+}
+
+.wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ── Background utilities ──────────────────────────────────────────
+.bg-light { background: $bg;          color: $ink; }
+.bg-alt   { background: $surface-alt; color: $ink; }
+.bg-dark  { background: $bg;          color: $ink; }
+
+// ── Buttons ───────────────────────────────────────────────────────
+[hidden] { display: none !important; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-family: $font-family;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: filter 0.18s $ease-out, box-shadow 0.18s $ease-out, transform 0.18s $ease-out, border-color 0.18s $ease-out;
+  border: 1px solid transparent;
+  text-align: center;
+  white-space: nowrap;
+
+  i, svg { width: 18px; height: 18px; }
+  &:active { transform: translateY(1px); }
+  &:disabled { opacity: 0.55; cursor: default; transform: none; }
+
+  &.primary {
+    background: $accent-grad;
+    color: #0b0f1a;
+    box-shadow: $glow;
+    &:hover:not(:disabled) { filter: brightness(1.08); box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.5), 0 10px 36px rgba(139, 92, 246, 0.3); }
+  }
+
+  &.outline {
+    background: $surface-2;
+    color: $ink;
+    border-color: $border;
+    &:hover { border-color: rgba($violet, 0.5); }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: $violet-bright;
+    &:hover { background: rgba($violet, 0.12); }
+  }
+}
+
+// ── Fade-in with stagger cascade ─────────────────────────────────
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s $ease-out, transform 0.7s $ease-out;
+  transition-delay: calc(var(--stagger, 0) * 110ms);
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}
+
+// ── Typography ───────────────────────────────────────────────────
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.15; color: $ink; }
+h1 { letter-spacing: -0.03em; }
+h2 { letter-spacing: -0.02em; }
+
+.eyebrow {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: $accent-grad;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

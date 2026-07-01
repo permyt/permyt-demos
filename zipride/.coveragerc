@@ -1,0 +1,18 @@
+[run]
+omit =
+    */commands/*
+    */factories/*
+    */migrations/*
+    */settings/*
+    */tests/*
+    *__init__.py
+    *admin.py
+    *factories.py
+    *tests.py
+    *urls.py
+
+[report]
+sort = -cover
+
+[html]
+directory = coverage

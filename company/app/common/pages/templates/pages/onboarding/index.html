@@ -1,0 +1,155 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section onboarding-screen">
+  <div class="onboarding-card fade-in" style="--stagger: 0">
+    <span class="onboarding-mark atlas-mark" aria-hidden="true">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="6" width="52" height="52" rx="14" class="mark-disc"/>
+        <path d="M22 44 L32 18 L42 44" class="mark-arc" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M26.5 35 H37.5" class="mark-arc" stroke-width="3.6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </span>
+
+    <span id="onboarding-spinner" class="onboarding-spinner"></span>
+
+    <h1 id="onboarding-title">Fetching your company details…</h1>
+    <p id="onboarding-sub" class="onboarding-sub">
+      Approve the request in your PERMYT app to continue.
+    </p>
+
+    {% csrf_token %}
+    <button type="button" id="onboarding-retry" class="button primary onboarding-retry" hidden>
+      Request again
+    </button>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+(function () {
+  "use strict";
+
+  var titleEl = document.getElementById("onboarding-title");
+  var subEl = document.getElementById("onboarding-sub");
+  var spinnerEl = document.getElementById("onboarding-spinner");
+  var card = document.querySelector(".onboarding-card");
+  var retryEl = document.getElementById("onboarding-retry");
+  var csrfToken = (document.querySelector("[name=csrfmiddlewaretoken]") || {}).value || "";
+
+  var settled = false;
+  var tries = 0;
+  var MAX_TRIES = 48; // ~2 min at 2500ms
+  var poll = null;
+
+  function stopPoll() {
+    if (poll) { clearInterval(poll); poll = null; }
+  }
+
+  function showRetry() {
+    if (retryEl) retryEl.hidden = false;
+  }
+
+  function complete() {
+    if (settled) return;
+    settled = true;
+    stopPoll();
+    window.location.href = "/";
+  }
+
+  function softTimeout() {
+    stopPoll();
+    if (settled) return;
+    if (spinnerEl) spinnerEl.style.display = "none";
+    if (titleEl) titleEl.textContent = "Taking longer than expected";
+    if (subEl) {
+      subEl.textContent =
+        "Approve the request in your PERMYT app, or request it again.";
+    }
+    showRetry();
+  }
+
+  function failed(reason) {
+    if (settled) return;
+    settled = true;
+    stopPoll();
+    if (card) card.classList.add("is-error");
+    if (spinnerEl) spinnerEl.style.display = "none";
+    if (titleEl) titleEl.textContent = "We couldn't fetch your company details";
+    if (subEl) {
+      subEl.textContent =
+        reason || "The request was not approved. Please try again.";
+    }
+    showRetry();
+  }
+
+  function restart() {
+    settled = false;
+    tries = 0;
+    if (retryEl) retryEl.hidden = true;
+    if (card) card.classList.remove("is-error");
+    if (spinnerEl) spinnerEl.style.display = "";
+    if (titleEl) titleEl.textContent = "Fetching your company details…";
+    if (subEl) subEl.textContent = "Approve the request in your PERMYT app to continue.";
+    stopPoll();
+    check();
+    poll = setInterval(tick, 2500);
+  }
+
+  async function retry() {
+    if (retryEl) { retryEl.disabled = true; retryEl.textContent = "Requesting…"; }
+    try {
+      await fetch("/rest/onboarding/retry/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+      });
+    } catch (_) {
+      // ignore — restart keeps polling regardless
+    }
+    if (retryEl) { retryEl.disabled = false; retryEl.textContent = "Request again"; }
+    restart();
+  }
+
+  async function check() {
+    if (settled) { stopPoll(); return; }
+    try {
+      var resp = await fetch("/rest/onboarding/status/", { headers: { Accept: "application/json" } });
+      if (!resp.ok) return;
+      var data = await resp.json();
+      if (data && data.onboarding_complete) complete();
+    } catch (_) {
+      // best-effort — keep polling
+    }
+  }
+
+  function tick() {
+    tries += 1;
+    if (tries > MAX_TRIES) { softTimeout(); return; }
+    check();
+  }
+
+  if (retryEl) retryEl.addEventListener("click", retry);
+
+  check();
+  poll = setInterval(tick, 2500);
+
+  // Optional WS fast-path: reload on the broker's onboarding push.
+  try {
+    var protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    var ws = new WebSocket(protocol + "//" + window.location.host + "/ws/");
+    ws.addEventListener("message", function (e) {
+      try {
+        var msg = JSON.parse(e.data);
+        if (!msg || msg.type !== "onboarding") return;
+        if (msg.event === "onboarding_verified") complete();
+        else if (msg.event === "onboarding_failed") failed(msg.reason);
+      } catch (_) { /* ignore */ }
+    });
+  } catch (_) {
+    // WS optional — polling is sufficient
+  }
+})();
+</script>
+{% endblock %}

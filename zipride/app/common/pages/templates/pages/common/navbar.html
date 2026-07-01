@@ -1,0 +1,30 @@
+{% load static %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="40" height="40" rx="9" fill="#FF5A1F"/>
+        <path d="M11 26.5 22 9l3.4 8.3H30l-3.2 5.1H17.3L15 26.5h-4Z" fill="#fff"/>
+        <circle cx="14" cy="29.5" r="2.4" fill="#0A1F14"/>
+        <circle cx="27" cy="29.5" r="2.4" fill="#0A1F14"/>
+      </svg>
+      <span>Zipride</span>
+    </span>
+    {% if organization_name and organization_name != "Zipride" %}
+    <span class="brand-divider"></span>
+    <span class="brand-context">{{ organization_name }}</span>
+    {% endif %}
+  </a>
+  <div class="nav-right">
+    <span class="nav-mode">Driver sign-up</span>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" class="nav-logout-form">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout">
+        <i data-lucide="log-out"></i>
+        Sign out
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</nav>

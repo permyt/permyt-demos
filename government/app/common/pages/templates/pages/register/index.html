@@ -1,0 +1,101 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero">
+  <div class="hero-inner">
+    <div class="hero-content fade-in" style="--stagger: 0">
+      <span class="eyebrow"><i data-lucide="shield"></i> Registry console &mdash; staff use</span>
+      <h1>Register an authoritative identity record</h1>
+      <p class="subheadline">
+        Enrol a citizen or an organisation into the national registry, then issue
+        a connect code so the holder can link the record to their PERMYT identity.
+      </p>
+
+      <form id="register-form" class="request-card" method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        <input type="hidden" name="profile_type" id="profile_type" value="person" />
+
+        <div class="type-toggle">
+          <button type="button" class="type-btn active" data-type="person">
+            <i data-lucide="user"></i> Person
+          </button>
+          <button type="button" class="type-btn" data-type="business">
+            <i data-lucide="building-2"></i> Business
+          </button>
+        </div>
+
+        <!-- Person fields -->
+        <div class="type-fields" data-fields="person">
+          <label for="full_name">Full name</label>
+          <input id="full_name" name="full_name" type="text" placeholder="Eleanor Pembroke" />
+          <label for="p_birthdate">Birthdate</label>
+          <input id="p_birthdate" name="birthdate" type="date" />
+          <label for="p_address">Address</label>
+          <textarea id="p_address" name="address" placeholder="10 Clerkenwell Road, London"></textarea>
+          <label for="p_country">Country (ISO alpha-2)</label>
+          <input id="p_country" name="country" type="text" maxlength="2" placeholder="GB" />
+          <label for="p_tax_id">Tax ID</label>
+          <input id="p_tax_id" name="tax_id" type="text" placeholder="AB123456C" />
+          <p class="field-hint">Leave blanks empty — they are filled with synthetic data on save.</p>
+        </div>
+
+        <!-- Business fields -->
+        <div class="type-fields hidden" data-fields="business">
+          <label for="legal_name">Legal name</label>
+          <input id="legal_name" name="legal_name" type="text" placeholder="London Coffee Roasters Ltd" />
+          <label for="registration_number">Registration number</label>
+          <input id="registration_number" name="registration_number" type="text" placeholder="07654321" />
+          <label for="b_tax_id">Tax ID</label>
+          <input id="b_tax_id" name="tax_id" type="text" placeholder="GB123456789" />
+          <label for="incorporation_date">Incorporation date</label>
+          <input id="incorporation_date" name="incorporation_date" type="date" />
+          <label for="registered_address">Registered address</label>
+          <textarea id="registered_address" name="registered_address" placeholder="42 Brick Lane, London E1 6QL"></textarea>
+          <label for="b_country">Country (ISO alpha-2)</label>
+          <input id="b_country" name="country" type="text" maxlength="2" placeholder="GB" />
+          <label for="mcc">MCC</label>
+          <input id="mcc" name="mcc" type="text" placeholder="5499" />
+          <label for="website">Website</label>
+          <input id="website" name="website" type="text" placeholder="https://londoncoffeeroasters.com" />
+
+          <div class="shareholders-head">
+            <label>Beneficial owners</label>
+            <button type="button" class="log-clear" id="add-shareholder">+ Add owner</button>
+          </div>
+          <div id="shareholders"></div>
+          <input type="hidden" name="shareholders_json" id="shareholders_json" value="[]" />
+        </div>
+
+        <button type="submit" class="button primary"><i data-lucide="file-plus-2"></i> Enrol &amp; issue connect code</button>
+      </form>
+    </div>
+
+    <div class="hero-visual fade-in" style="--stagger: 1">
+      <div class="registry-list">
+        <div class="log-header">
+          <h3>Registered records</h3>
+          <a href="{% url 'register' %}" class="log-clear">Refresh</a>
+        </div>
+        <div id="record-list">
+          {% for r in records %}
+          <a class="record-row" href="{% url 'register-detail' r.id %}">
+            <span class="record-icon" data-lucide="{% if r.type == 'business' %}building-2{% else %}user{% endif %}"></span>
+            <span class="record-name">{{ r.name }}</span>
+            <span class="badge {% if r.connected %}success{% else %}error{% endif %}">
+              {% if r.connected %}Linked{% else %}Pending{% endif %}
+            </span>
+          </a>
+          {% empty %}
+          <p class="empty-state">No records yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/register.js' %}"></script>
+{% endblock %}

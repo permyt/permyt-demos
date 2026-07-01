@@ -1,0 +1,94 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section bank-dashboard">
+  <div class="bank-inner">
+
+    <div class="dash-greeting fade-in" style="--stagger: 0">
+      <span class="eyebrow">Your account</span>
+      <h1 id="dash-heading">
+        {% if profile.full_name %}Welcome, {{ profile.full_name }}.{% else %}Welcome to Meridian.{% endif %}
+      </h1>
+      {# Account-holder name & address are gov-verified via PERMYT and rendered non-editable below. #}
+      <p>Here's everything happening with your money.</p>
+    </div>
+
+    <!-- Account + balance card -->
+    <div class="account-card fade-in" style="--stagger: 2">
+      <div class="account-top">
+        <div class="account-holder">
+          <span class="account-eyebrow">Account holder</span>
+          <div class="holder-row">
+            <div class="account-name">{{ profile.full_name }}</div>
+            <span class="verified-badge">
+              <i data-lucide="badge-check"></i> Verified by PERMYT
+            </span>
+          </div>
+          {% if profile.address %}
+          <div class="account-address">
+            <i data-lucide="map-pin"></i>
+            <span>{{ profile.address }}</span>
+          </div>
+          {% endif %}
+        </div>
+        <span class="account-brand">
+          <span class="brand-mark sm" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="32" r="30" class="mark-disc"/>
+              <path d="M14 38c6-12 14-20 18-20s12 8 18 20" class="mark-arc-mint" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+              <path d="M14 26c6 12 14 20 18 20s12-8 18-20" class="mark-arc-light" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+              <circle cx="32" cy="32" r="3.6" class="mark-dot"/>
+            </svg>
+          </span>
+          Meridian
+        </span>
+      </div>
+
+      <div class="balance-block">
+        <span class="bank-eyebrow">Available balance</span>
+        <div class="balance-row">
+          <span id="balance-amount" class="balance-amount">{{ profile.balance }}</span>
+          <span id="balance-currency" class="balance-currency">{{ profile.currency }}</span>
+        </div>
+      </div>
+
+      <div class="account-iban">
+        <span class="iban-label">IBAN</span>
+        <span id="profile-iban" class="iban-value">{{ profile.iban }}</span>
+      </div>
+    </div>
+
+    <!-- Movements -->
+    <div class="bank-movements fade-in" style="--stagger: 3">
+      <div class="bank-movements-header">
+        <h3>Recent activity</h3>
+      </div>
+      <ul id="movements-list" class="bank-movements-list">
+        {% for m in movements %}
+        <li class="movement {% if m.amount|slice:':1' == '-' %}debit{% else %}credit{% endif %}" data-id="{{ m.id }}">
+          <span class="movement-icon">
+            {% if m.amount|slice:':1' == '-' %}<i data-lucide="arrow-up-right"></i>{% else %}<i data-lucide="arrow-down-left"></i>{% endif %}
+          </span>
+          <div class="movement-main">
+            <div class="movement-counterparty">{{ m.counterparty_name|default:m.counterparty_iban }}</div>
+            <div class="movement-reference">{{ m.reference }}</div>
+          </div>
+          <div class="movement-side">
+            <div class="movement-amount">{{ m.amount }} {{ m.currency }}</div>
+            <div class="movement-date">{{ m.date }}</div>
+          </div>
+        </li>
+        {% empty %}
+        <li class="movement empty" id="movements-empty">No activity yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

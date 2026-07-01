@@ -1,0 +1,69 @@
+# ---------------------------------------------------------------------------
+# PERMYT demos — monorepo .gitignore
+#
+# One repository holding every demo (bank/, government/, vaulton/, ...). Each
+# demo is a self-contained Django app with its own env, keys, .env and settings
+# override. This file keeps all of those per-demo local/secret/generated files
+# out of git so a server deploy only ever pulls source — never machine state.
+#
+# Anchored `/*/…` rules match a demo directory one level down (e.g. bank/static)
+# WITHOUT matching committed source at deeper paths (e.g. bank/app/.../static).
+# ---------------------------------------------------------------------------
+
+# --- Secrets & machine-local config (per demo, never committed) ---
+.env
+**/.env
+settings/local.py
+**/settings/local.py
+keys/
+**/keys/
+*.pem
+*.pub
+
+# --- Virtualenvs ---
+env
+venv
+.venv
+**/env/
+**/venv/
+**/.venv/
+
+# --- Databases & dumps ---
+*.sqlite3
+*.dump
+
+# --- Generated static / media (rebuilt on deploy via collectstatic) ---
+# Anchored to a demo dir so committed sources under app/.../static are kept.
+/*/static/
+/*/media/
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.cache/
+.coverage
+htmlcov/
+
+# --- Logs / sockets ---
+*.log
+*.sock
+*.sock.lock
+
+# --- Editors & tooling ---
+.history/
+.idea/
+.claude/
+*.sublime-*
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+*.icloud

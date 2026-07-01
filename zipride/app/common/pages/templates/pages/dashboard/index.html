@@ -1,0 +1,97 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section onboard-shell">
+  <div class="onboard-inner">
+
+    <div class="onboard-head fade-in" style="--stagger: 0">
+      <div>
+        <div class="crumb">
+          <i data-lucide="car-front"></i>
+          Driver sign-up &nbsp;·&nbsp; Verification &nbsp;·&nbsp; In progress
+        </div>
+        <h1>Getting you road-ready for {{ organization_name|default:"Zipride" }}</h1>
+        <p class="onboard-sub">
+          We're confirming your <strong>identity</strong>, your
+          <strong>right to work</strong>, and that your
+          <strong>driving licence</strong> is valid with no disqualifications —
+          by asking the authoritative sources <span class="via">via PERMYT</span>.
+          No photos of documents, no uploads.
+        </p>
+      </div>
+      <div class="onboard-action">
+        {% csrf_token %}
+        <span class="onboard-live"><span class="spinner"></span> Checking with the authoritative sources&hellip;</span>
+        <button type="button" id="retryBtn" class="button primary" hidden>
+          <i data-lucide="rotate-ccw"></i> Run check again
+        </button>
+      </div>
+    </div>
+
+    <div class="onboard-grid">
+
+      <!-- LEFT: answers returned directly by the authoritative sources -->
+      <div class="panel fade-in" style="--stagger: 1">
+        <div class="panel-title">
+          <i data-lucide="badge-check"></i> What the sources confirmed
+        </div>
+
+        <div id="collected" class="collected-grid"></div>
+
+        <div id="collectedEmpty" class="collected-empty">
+          <i data-lucide="file-search"></i>
+          <div>Approve on your PERMYT app and we'll pull the answers from the authoritative sources.</div>
+        </div>
+
+        <!-- RESULT: all answers received -->
+        <div id="collectedDone" class="result-banner hidden">
+          <i data-lucide="check-circle-2"></i>
+          <div>
+            <strong>All answers received.</strong>
+            The authoritative sources answered directly — the licence authority
+            confirms the licence itself, so there's nothing to forge or upload.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: verification progress -->
+      <div class="panel fade-in" style="--stagger: 2">
+        <div class="panel-title">
+          <i data-lucide="list-checks"></i> Verification progress
+        </div>
+        <ol class="stage-track" id="stageTrack">
+          <li data-stage="sent" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Requested</span>
+          </li>
+          <li data-stage="approval" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Awaiting your approval</span>
+          </li>
+          <li data-stage="approved" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Approved</span>
+          </li>
+          <li data-stage="answers" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Answers received</span>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <footer class="app-footer">
+      <span class="footer-powered">
+        <span class="brand-word">{{ organization_name|default:"Zipride" }}</span> Driver Onboarding
+      </span>
+      <span class="footer-permyt">Answered directly by the authoritative source &amp; brokered via PERMYT — we never see your documents.</span>
+    </footer>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.__permytUserId = "{{ permyt_user_id|escapejs }}";
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

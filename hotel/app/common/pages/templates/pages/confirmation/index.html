@@ -1,0 +1,68 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section confirmation-shell">
+  <div class="confirmation-inner fade-in" style="--stagger: 0">
+    {% if booking %}
+      <div class="confirmation-card">
+        <span class="confirmation-mark" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="eyebrow">Reservation confirmed</span>
+        <h1>We&rsquo;ll see you soon.</h1>
+        <p class="confirmation-lede">
+          Your suite at {{ hotel_name }} is held and paid for.
+          A warm welcome and a key are waiting at the front desk.
+        </p>
+
+        <dl class="confirmation-details">
+          <div class="span-2">
+            <dt>Guest</dt>
+            <dd>{{ form_data.full_name|default:"—" }}</dd>
+          </div>
+          <div class="span-2">
+            <dt>Address</dt>
+            <dd>{{ form_data.address|default:"—" }}</dd>
+          </div>
+          <div>
+            <dt>Country</dt>
+            <dd>{{ form_data.country|default:"—" }}</dd>
+          </div>
+          <div>
+            <dt>VAT</dt>
+            <dd>{{ form_data.vat|default:"—" }}</dd>
+          </div>
+          <div>
+            <dt>Nights</dt>
+            <dd>{{ booking.nights }}</dd>
+          </div>
+          <div>
+            <dt>Total paid</dt>
+            <dd>{{ booking.total_amount }} {{ booking.currency }}</dd>
+          </div>
+          <div class="span-2">
+            <dt>Payment reference</dt>
+            <dd class="mono">{{ booking.payment_reference|default:"—" }}</dd>
+          </div>
+        </dl>
+
+        <form action="{% url 'new_booking' %}" method="post" class="reset-form">
+          {% csrf_token %}
+          <button type="submit" class="button ghost">Make another booking</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="confirmation-card confirmation-card--empty">
+        <span class="eyebrow">Nothing here yet</span>
+        <h1>No reservation on this session</h1>
+        <p class="confirmation-lede">Begin a new check-in from the front page.</p>
+        <a href="/" class="button primary">Go to check-in</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

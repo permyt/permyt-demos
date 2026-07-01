@@ -1,0 +1,71 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<main class="console">
+  <div class="page-head fade-in" style="--stagger: 0">
+    <span class="eyebrow"><i data-lucide="building-2"></i> Company knowledge base</span>
+    <h1>{{ company_name }}</h1>
+    <p class="subheadline">
+      This is what your Atlas agent knows and shares on your behalf. Keep it
+      current — verified partners and KYC checks read these fields (only with
+      your approval) via PERMYT.
+    </p>
+  </div>
+
+  <section class="identity-card fade-in" style="--stagger: 1">
+    <div class="identity-head">
+      <span class="identity-eyebrow"><i data-lucide="building-2"></i> Registered identity</span>
+      <span class="verified-badge"><i data-lucide="shield-check"></i> Verified by Gov.ID</span>
+    </div>
+    <dl class="identity-grid">
+      <div class="identity-row">
+        <dt>Legal name</dt>
+        <dd>{{ kb.name|default:"—" }}</dd>
+      </div>
+      <div class="identity-row">
+        <dt>Registration number</dt>
+        <dd class="mono">{{ kb.registration_number|default:"—" }}</dd>
+      </div>
+      <div class="identity-row">
+        <dt>Registered address</dt>
+        <dd>{{ kb.registered_address|default:"—" }}</dd>
+      </div>
+      <div class="identity-row">
+        <dt>Country of registration</dt>
+        <dd class="mono">{{ kb.country|default:"—" }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <form id="profile-form" class="kb-form fade-in" style="--stagger: 2">
+    <div class="kb-card">
+      <div class="kb-field">
+        <label for="profile-business_plan">Business plan</label>
+        <textarea id="profile-business_plan" name="business_plan" rows="5" class="profile-input">{{ kb.business_plan }}</textarea>
+      </div>
+      <div class="kb-field">
+        <label for="profile-financials_summary">Financials summary</label>
+        <textarea id="profile-financials_summary" name="financials_summary" rows="4" class="profile-input">{{ kb.financials_summary }}</textarea>
+      </div>
+      <div class="kb-field">
+        <label for="profile-products">Products &amp; services <span class="kb-hint">one per line</span></label>
+        <textarea id="profile-products" name="products" rows="5" class="profile-input">{{ kb.products }}</textarea>
+      </div>
+      <div class="kb-field">
+        <label for="profile-narrative">Additional context <span class="kb-hint">free-form notes your agent can draw on</span></label>
+        <textarea id="profile-narrative" name="narrative" rows="4" class="profile-input">{{ kb.narrative }}</textarea>
+      </div>
+    </div>
+
+    <div class="kb-actions">
+      <button type="submit" class="button primary save-btn">Save knowledge base</button>
+      <span id="profile-status" class="save-status"></span>
+    </div>
+  </form>
+</main>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

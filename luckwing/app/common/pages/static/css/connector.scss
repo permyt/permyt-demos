@@ -1,0 +1,733 @@
+// ════════════════════════════════════════════════════════════════════
+// Luckwing — components (navbar, login, account-opening dashboard)
+// Bright, playful iGaming aesthetic with safer-gambling framing.
+// ════════════════════════════════════════════════════════════════════
+
+$brand:         #7c3aed;
+$brand-dark:    #6d28d9;
+$magenta:       #ec4899;
+$orange:        #fb923c;
+$ink:           #2a1442;
+$ink-soft:      #5b4574;
+$ink-muted:     #8a7aa0;
+$surface:       #ffffff;
+$surface-alt:   #faf5ff;
+$border:        #ecdffb;
+$green:         #16a34a;
+$green-soft:    #cdf5d8;
+$green-ink:     #0a6c2e;
+$amber:         #c2410c;
+$amber-soft:    #ffedd5;
+$red:           #e11d48;
+
+$font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+$shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 2px 5px -1px rgba(50, 50, 93, 0.12), 0 1px 3px -1px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.06);
+$shadow-xl: 0 15px 35px rgba(50, 50, 93, 0.12), 0 5px 15px rgba(0, 0, 0, 0.07);
+
+@mixin card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 12px;
+  box-shadow: $shadow-md;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// NAVBAR — Luckwing top bar
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px #{"clamp(16px, 4vw, 40px)"};
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid $border;
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: $brand;
+
+      svg { width: 26px; height: 26px; }
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 22px;
+      background: $border;
+    }
+
+    .brand-context {
+      font-size: 14px;
+      font-weight: 500;
+      color: $ink-soft;
+    }
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nav-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: $amber;
+    background: $amber-soft;
+    padding: 4px 10px;
+    border-radius: 20px;
+
+    &::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: $amber;
+    }
+  }
+
+  .nav-logout-form { display: contents; }
+
+  .nav-logout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $ink-muted;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.2s;
+
+    &:hover { color: $ink; }
+    svg { width: 16px; height: 16px; }
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HERO — login / connect
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.section.hero {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding-top: 96px;
+  background: $surface-alt;
+
+  // Energetic violet→magenta→orange wash — playful but never garish
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1200px 620px at 85% -10%, rgba($brand, 0.22), transparent 60%),
+      radial-gradient(900px 520px at -10% 110%, rgba($magenta, 0.16), transparent 55%),
+      radial-gradient(700px 460px at 110% 100%, rgba($orange, 0.14), transparent 55%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    max-width: 1080px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 #{"clamp(16px, 4vw, 40px)"};
+    gap: 56px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-content {
+    flex: 1 1 420px;
+
+    h1 {
+      font-size: #{"clamp(34px, 4vw + 8px, 56px)"};
+      font-weight: 800;
+      margin-bottom: 22px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .subheadline {
+      font-size: #{"clamp(16px, 1vw + 8px, 19px)"};
+      font-weight: 400;
+      max-width: 480px;
+      margin-bottom: 32px;
+      color: $ink-soft;
+      line-height: 1.6;
+    }
+  }
+
+  .hero-points {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 460px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 15px;
+      color: $ink-soft;
+
+      .tick {
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: $green-soft;
+        color: $green-ink;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1px;
+        svg { width: 13px; height: 13px; }
+      }
+      strong { color: $ink; font-weight: 600; }
+    }
+  }
+
+  .hero-visual {
+    flex: 1 1 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// QR CARD — Login page
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.qr-card {
+  @include card;
+  box-shadow: $shadow-xl;
+  padding: 32px;
+  text-align: center;
+  min-width: 320px;
+
+  .qr-card-head {
+    font-size: 15px;
+    font-weight: 600;
+    color: $ink;
+    margin-bottom: 4px;
+  }
+  .qr-card-sub {
+    font-size: 13px;
+    color: $ink-muted;
+    margin-bottom: 22px;
+  }
+
+  #qr-container {
+    display: inline-block;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid $border;
+    border-radius: 12px;
+    margin-bottom: 20px;
+
+    svg { width: 300px; height: 300px; display: block; }
+  }
+
+  #status {
+    font-size: 14px;
+    font-weight: 500;
+    color: $ink-muted;
+    min-height: 20px;
+
+    &.authenticated { color: $green-ink; font-weight: 600; }
+    &.error { color: $red; font-weight: 500; }
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba($brand, 0.2);
+  border-top-color: $brand;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Powered-by row ──────────────────────────────────────────────
+.powered-by {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 24px;
+  font-size: 13px;
+  color: $ink-muted;
+
+  .brand-word {
+    font-weight: 800;
+    background: linear-gradient(90deg, $brand, $magenta 55%, $orange);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  .permyt-word { font-weight: 600; color: $ink-soft; }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// BADGES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+
+  &.success { background: $green-soft; color: $green-ink; }
+  &.error   { background: lighten($red, 38%); color: $red; }
+  &.pending { background: $amber-soft; color: $amber; }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DASHBOARD — Luckwing account opening
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.hidden { display: none !important; }
+
+.section.onboard-shell {
+  min-height: 100dvh;
+  padding-top: 96px;
+  padding-bottom: 64px;
+  background: $surface-alt;
+  position: relative;
+}
+
+.onboard-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 #{"clamp(16px, 4vw, 40px)"};
+}
+
+// ── Page header ──────────────────────────────────────────────────
+.onboard-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+
+  .crumb {
+    font-size: 13px;
+    font-weight: 500;
+    color: $ink-muted;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    svg { width: 14px; height: 14px; }
+  }
+
+  h1 {
+    font-size: #{"clamp(26px, 2vw + 12px, 34px)"};
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  .onboard-sub {
+    font-size: 15px;
+    color: $ink-soft;
+    margin-top: 8px;
+    max-width: 540px;
+    line-height: 1.55;
+
+    .via {
+      font-weight: 600;
+      color: $brand;
+    }
+  }
+
+  .button i, .button svg { width: 18px; height: 18px; }
+}
+
+// ── Two-column body ──────────────────────────────────────────────
+.onboard-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.panel {
+  @include card;
+  padding: 24px;
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $ink-muted;
+    margin-bottom: 18px;
+
+    svg { width: 15px; height: 15px; color: $brand; }
+  }
+}
+
+// ── Stage track (Connect requirements steps) ─────────────────────
+.stage-track {
+  display: flex;
+  flex-direction: column;
+
+  .stage-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    position: relative;
+
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 32px;
+      bottom: -4px;
+      width: 2px;
+      background: $border;
+    }
+
+    .stage-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid $border;
+      background: #fff;
+      flex-shrink: 0;
+      transition: all 0.3s $ease-out;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      &::after {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: transparent;
+        transition: background 0.3s;
+      }
+    }
+
+    .stage-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: $ink-muted;
+      transition: color 0.3s;
+    }
+
+    &.active {
+      .stage-dot {
+        border-color: $brand;
+        box-shadow: 0 0 0 4px rgba($brand, 0.14);
+        animation: stage-pulse 1.5s $ease-out infinite;
+        &::after { background: $brand; }
+      }
+      .stage-label { color: $ink; font-weight: 600; }
+    }
+
+    &.done {
+      .stage-dot {
+        border-color: $green;
+        background: $green;
+        &::after { background: transparent; }
+      }
+      .stage-label { color: $ink-soft; }
+      &::after { background: $green; }
+    }
+
+    &.error {
+      .stage-dot { border-color: $red; &::after { background: $red; } }
+      .stage-label { color: $red; font-weight: 600; }
+    }
+  }
+}
+
+@keyframes stage-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba($brand, 0.14); }
+  50% { box-shadow: 0 0 0 7px rgba($brand, 0.04); }
+}
+
+// ── Empty / placeholder in facts panel ───────────────────────────
+.collected-empty {
+  text-align: center;
+  padding: 28px 16px;
+  color: $ink-muted;
+  font-size: 14px;
+
+  svg { width: 28px; height: 28px; color: #cfd7df; margin: 0 auto 10px; }
+}
+
+.collected-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.fact-card {
+  background: $surface-alt;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 14px;
+  opacity: 1;
+  transition: all 0.4s $ease-out;
+
+  &.field-typing { opacity: 0.25; transform: translateY(6px); filter: blur(1px); }
+  &.filled {
+    opacity: 1;
+    transform: translateY(0);
+    filter: none;
+    border-color: $green-soft;
+    animation: fact-pulse 800ms $ease-out;
+  }
+
+  .fact-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+  .fact-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $ink-muted;
+  }
+  .fact-source {
+    font-size: 10px;
+    font-weight: 600;
+    color: $brand;
+    background: rgba($brand, 0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+
+    &[data-src^="National"] { color: $brand-dark; background: rgba($brand, 0.12); }
+    &[data-src^="Meridian"] { color: #0a6c2e;     background: rgba($green, 0.14); }
+    &[data-src^="Sentinel"] { color: #be185d;     background: rgba($magenta, 0.12); }
+  }
+  .fact-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: $ink;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+}
+
+@keyframes fact-pulse {
+  0% { background: rgba($green, 0.1); }
+  100% { background: $surface-alt; }
+}
+
+// ── Result card — created connected account ──────────────────────
+.result-card {
+  @include card;
+  margin-top: 24px;
+  padding: 0;
+  overflow: hidden;
+  border-color: $green-soft;
+
+  .result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 24px;
+    background: linear-gradient(180deg, rgba($green, 0.06), rgba($green, 0.02));
+    border-bottom: 1px solid $border;
+  }
+  .result-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $ink;
+    svg { width: 18px; height: 18px; color: $green-ink; }
+  }
+
+  .result-body { padding: 22px 24px; }
+
+  .done-line {
+    font-size: 15px;
+    font-weight: 700;
+    color: $ink;
+    margin-bottom: 6px;
+  }
+  .done-sub {
+    font-size: 13px;
+    color: $ink-soft;
+    line-height: 1.55;
+  }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid $border;
+    &:last-child { border-bottom: none; }
+
+    .row-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: $ink-muted;
+    }
+  }
+
+  .acct-id {
+    font-family: $mono;
+    font-size: 14px;
+    font-weight: 600;
+    color: $ink;
+    background: $surface-alt;
+    border: 1px solid $border;
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+
+  .cap-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .cap-chip {
+    font-size: 12px;
+    font-weight: 600;
+    color: $green-ink;
+    background: $green-soft;
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .requirements {
+    font-size: 13px;
+    .req-ok { color: $green-ink; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+    .req-pending { color: $amber; font-weight: 600; }
+    .req-note {
+      color: $ink-muted;
+      font-size: 12px;
+      margin-top: 8px;
+      font-family: $mono;
+    }
+  }
+}
+
+// ── Footer ───────────────────────────────────────────────────────
+.app-footer {
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid $border;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: $ink-muted;
+
+  .footer-powered {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    .brand-word {
+      font-weight: 800;
+      background: linear-gradient(90deg, $brand, $magenta 55%, $orange);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .footer-permyt { font-weight: 500; }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// RESPONSIVE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@media (max-width: 880px) {
+  .onboard-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .section.hero {
+    padding-top: 80px;
+    .hero-inner { gap: 36px; }
+    .hero-content { flex-basis: 100%; }
+    .hero-visual { flex-basis: 100%; justify-content: center; }
+  }
+  .qr-card { min-width: unset; width: 100%; max-width: 100%; }
+  .navbar .brand-context { display: none; }
+  .collected-grid { grid-template-columns: 1fr; }
+}
+
+// ── Onboarding live indicator (auto-start, replaces the old button) ──
+.onboard-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $ink-soft;
+  white-space: nowrap;
+
+  i, svg { width: 16px; height: 16px; }
+  &.is-error { color: #b42318; }
+}

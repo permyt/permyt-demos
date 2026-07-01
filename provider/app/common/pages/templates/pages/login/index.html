@@ -1,0 +1,98 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section hero bg-dark">
+  <div class="hero-inner">
+    <div class="hero-content fade-in" style="--stagger: 0">
+      <h1>PERMYT NoteVault</h1>
+      <p class="subheadline">
+        Scan the QR code with your PERMYT app to access your space notes.
+      </p>
+    </div>
+    <div class="hero-visual fade-in" style="--stagger: 1">
+      <div class="qr-card">
+        {% csrf_token %}
+        <div id="qr-container">{{ qr_svg|safe }}</div>
+        <p id="status"><span class="spinner"></span> Waiting for scan&hellip;</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var LOGIN_ID = "{{ login_id }}";
+    var csrfToken = (document.querySelector("[name=csrfmiddlewaretoken]") || {}).value || "";
+
+    // ── QR auto-refresh ──────────────────────────────────────────────
+    // The connect envelope expires after 5 min. Re-mint a fresh QR ~30 s
+    // before expiry so the displayed code stays scannable.
+    var qrRefreshTimer = null;
+
+    function scheduleQrRefresh(ttlSeconds) {
+      if (qrRefreshTimer) clearTimeout(qrRefreshTimer);
+      var ttl = (ttlSeconds || 300) * 1000;
+      var lead = Math.min(30000, Math.max(5000, Math.floor(ttl * 0.1)));
+      qrRefreshTimer = setTimeout(refreshQr, ttl - lead);
+    }
+
+    function stopQrRefresh() {
+      if (qrRefreshTimer) { clearTimeout(qrRefreshTimer); qrRefreshTimer = null; }
+    }
+
+    function refreshQr() {
+      fetch("{% url 'login-qr-refresh' %}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+        body: JSON.stringify({ id: LOGIN_ID }),
+      })
+        .then(function (res) {
+          if (!res.ok) { if (res.status !== 409) scheduleQrRefresh(30); return null; }
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data) return;
+          var container = document.getElementById("qr-container");
+          if (data.qr_svg && container) container.innerHTML = data.qr_svg;
+          scheduleQrRefresh(data.ttl_seconds);
+        })
+        .catch(function () { scheduleQrRefresh(30); });
+    }
+
+    scheduleQrRefresh();
+
+    var polling = setInterval(function () {
+      fetch("{% url 'login-status' %}?id=" + encodeURIComponent(LOGIN_ID))
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { status: res.status, data: data };
+          });
+        })
+        .then(function (result) {
+          if (result.data.status === "authenticated") {
+            clearInterval(polling);
+            stopQrRefresh();
+            var el = document.getElementById("status");
+            el.className = "authenticated";
+            el.textContent = "Authenticated! Redirecting\u2026";
+            setTimeout(function () {
+              window.location.href = "/";
+            }, 500);
+          } else if (result.status >= 400) {
+            clearInterval(polling);
+            stopQrRefresh();
+            var el = document.getElementById("status");
+            el.className = "error";
+            el.textContent = result.data.error || "Login failed.";
+          }
+        })
+        .catch(function () {
+          // Network error — keep polling
+        });
+    }, 2000);
+  });
+</script>
+{% endblock %}

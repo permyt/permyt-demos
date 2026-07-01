@@ -1,0 +1,28 @@
+{% load static %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-label="Sentinel mark">
+      <path d="M16 3 6 6.5v8c0 6.6 4.2 11.3 10 13.5 5.8-2.2 10-6.9 10-13.5v-8L16 3Z" fill="none" stroke="#14161a" stroke-width="1.4"/>
+      <path d="M11.5 16.2 14.6 19.3 20.8 12.5" fill="none" stroke="#3a4a5a" stroke-width="1.8" stroke-linecap="square"/>
+    </svg>
+    <span class="brand-text">
+      <span class="brand-name">Sentinel</span>
+      <span class="brand-sub">Screening Authority</span>
+    </span>
+  </a>
+  <div class="nav-right">
+    <span class="source-seal">
+      <i data-lucide="shield-check"></i>
+      Authoritative source
+    </span>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" class="nav-logout-form">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout">
+        <i data-lucide="log-out"></i>
+        Sign out
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</nav>

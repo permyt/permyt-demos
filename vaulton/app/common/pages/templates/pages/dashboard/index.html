@@ -1,0 +1,104 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section onboard-shell">
+  <div class="onboard-inner">
+
+    <div class="onboard-head fade-in" style="--stagger: 0">
+      <div>
+        <div class="crumb">
+          <i data-lucide="shield-check"></i>
+          Account &nbsp;·&nbsp; Verification &nbsp;·&nbsp; Trading access
+        </div>
+        <h1>Verifying your {{ organization_name|default:"Vaulton" }} account</h1>
+        <p class="onboard-sub">
+          Before you can trade, we confirm a few things <span class="via">via PERMYT</span> —
+          your identity, your residential address, the source of your £40,000 deposit,
+          and that you're not on any sanctions or PEP list. We ask the authoritative
+          sources directly. No documents, no uploads.
+        </p>
+      </div>
+      <div class="onboard-action">
+        {% csrf_token %}
+        <span class="onboard-live"><span class="spinner"></span> Confirming your details with the authoritative sources…</span>
+        <button type="button" id="retryBtn" class="button primary" hidden>
+          <i data-lucide="rotate-ccw"></i> Request again
+        </button>
+      </div>
+    </div>
+
+    <div class="onboard-grid">
+
+      <!-- LEFT: answers returned by the authoritative sources -->
+      <div class="panel fade-in" style="--stagger: 1">
+        <div class="panel-title">
+          <i data-lucide="badge-check"></i> What the sources confirmed
+        </div>
+
+        <div id="collected" class="collected-grid"></div>
+
+        <div id="collectedEmpty" class="collected-empty">
+          <i data-lucide="search-check"></i>
+          <div>We're asking your connected sources to confirm your details. Their answers appear here.</div>
+        </div>
+
+        <!-- RESULT: all answers received -->
+        <div id="result" class="result-card hidden">
+          <div class="result-head">
+            <span class="result-title">
+              <i data-lucide="check-circle-2"></i> All answers received
+            </span>
+            <span class="badge success" id="resultBadge">
+              <i data-lucide="check"></i> Verified
+            </span>
+          </div>
+          <div class="result-body">
+            <p class="result-note">
+              Every answer above was provided directly by the authoritative source.
+              You're cleared to start trading on {{ organization_name|default:"Vaulton" }}.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: verification progress -->
+      <div class="panel fade-in" style="--stagger: 2">
+        <div class="panel-title">
+          <i data-lucide="list-checks"></i> Verification progress
+        </div>
+        <ol class="stage-track" id="stageTrack">
+          <li data-stage="sent" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Requested</span>
+          </li>
+          <li data-stage="approval" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Awaiting your approval on PERMYT</span>
+          </li>
+          <li data-stage="approved" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Approved</span>
+          </li>
+          <li data-stage="done" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Answers received</span>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <footer class="app-footer">
+      <span class="footer-powered">
+        <span class="brand-word">{{ organization_name|default:"Vaulton" }}</span>
+      </span>
+      <span class="footer-permyt">Your details are confirmed directly by the authoritative sources and brokered via PERMYT — never re-keyed, never uploaded.</span>
+    </footer>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.__permytUserId = "{{ permyt_user_id|escapejs }}";
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

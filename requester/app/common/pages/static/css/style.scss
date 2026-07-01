@@ -1,0 +1,111 @@
+// ── Variables ──────────────────────────────────────────────────────
+$color-dark:       #20252b;
+$color-darker:     #292e34;
+$color-light:      #fdf4f2;
+$color-warm:       #eedee7;
+$color-primary:    #d04b16;
+$color-text-light: #eedee7;
+$color-text-dark:  #20252b;
+$color-coral:      #ffb59d;
+$color-green:      #a9d389;
+$color-mustard:    #887700;
+$color-outline:    #9e8b99;
+
+$font-family: "Space Grotesk", sans-serif;
+$ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+
+// ── Reset ─────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overscroll-behavior: none; }
+
+body {
+  font-family: $font-family;
+  font-weight: 300;
+  line-height: 1.6;
+  color: $color-text-light;
+  background: $color-dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+// ── Section system ────────────────────────────────────────────────
+.section {
+  width: 100%;
+  padding: #{"clamp(48px, 8vw, 120px)"} #{"clamp(16px, 4vw, 40px)"};
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ── Background utilities ──────────────────────────────────────────
+.bg-dark   { background: $color-dark;   color: $color-text-light; }
+.bg-darker { background: $color-darker; color: $color-text-light; }
+.bg-light  { background: $color-light;  color: $color-text-dark; }
+.bg-warm   { background: $color-warm;   color: $color-text-dark; }
+
+// ── Buttons ───────────────────────────────────────────────────────
+.button {
+  display: inline-block;
+  padding: 14px 36px;
+  border-radius: 8px;
+  font-family: $font-family;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: all 0.3s $ease-out;
+  border: 1.5px solid transparent;
+  text-align: center;
+
+  &:active { transform: translateY(1px) scale(0.98); }
+
+  &.primary {
+    background: $color-primary;
+    color: #fff;
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px rgba($color-primary, 0.25);
+    &:hover { background: darken($color-primary, 6%); border-color: darken($color-primary, 6%); box-shadow: 0 6px 24px rgba($color-primary, 0.35); transform: translateY(-1px); }
+  }
+
+  &.outline {
+    background: transparent;
+    color: $color-text-light;
+    border-color: rgba($color-text-light, 0.3);
+    &:hover { border-color: $color-text-light; background: rgba(255, 255, 255, 0.06); }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: $color-text-light;
+    border-color: transparent;
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+  }
+}
+
+// ── Fade-in with stagger cascade ─────────────────────────────────
+.fade-in {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s $ease-out, transform 0.8s $ease-out;
+  transition-delay: calc(var(--stagger, 0) * 120ms);
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}
+
+// ── Typography ───────────────────────────────────────────────────
+h1, h2, h3, h4 { font-weight: 600; line-height: 1.15; }
+h1 { letter-spacing: -0.03em; }
+h2 { letter-spacing: -0.02em; }
+
+.section-header {
+  font-size: #{"clamp(24px, 2.5vw + 8px, 40px)"};
+  margin-bottom: #{"clamp(32px, 4vw, 64px)"};
+}

@@ -1,0 +1,975 @@
+// ── The Aurelia — page styles (mirror style.scss tokens) ──────────
+$color-ink:        #2b2622;
+$color-ink-soft:   #5a504a;
+$color-cream:      #f6efe6;
+$color-cream-deep: #efe5d7;
+$color-paper:      #fbf7f0;
+$color-terracotta: #c2724a;
+$color-terra-deep: #a85c38;
+$color-sage:       #7d8a6f;
+$color-gold:       #b89150;
+$color-error:      #b4452f;
+
+$font-display: "Cormorant Garamond", Georgia, serif;
+$font-body:    "Inter", system-ui, sans-serif;
+$ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+
+@mixin paper-card {
+  background: $color-paper;
+  border: 1px solid rgba($color-gold, 0.28);
+  border-radius: 18px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 24px 60px -32px rgba($color-ink, 0.35);
+}
+
+@mixin hairline {
+  border: 1px solid rgba($color-gold, 0.4);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// NAVBAR
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px #{"clamp(20px, 4vw, 48px)"};
+  background: rgba($color-cream, 0.6);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s $ease-out, border-color 0.3s $ease-out, padding 0.3s $ease-out;
+
+  &.scrolled {
+    background: rgba($color-cream, 0.92);
+    border-bottom-color: rgba($color-gold, 0.3);
+    padding-top: 13px;
+    padding-bottom: 13px;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $color-terracotta;
+  }
+
+  .brand-mark { display: block; flex: 0 0 auto; }
+
+  .brand-text { display: flex; flex-direction: column; line-height: 1; }
+  .brand-name {
+    font-family: $font-display;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: $color-ink;
+  }
+  .brand-sub {
+    font-family: $font-body;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: $color-ink-soft;
+    margin-top: 3px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: $color-ink-soft;
+    transition: color 0.2s;
+    &:hover { color: $color-terracotta; }
+  }
+
+  .connector-badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $color-sage;
+    padding: 7px 14px;
+    border: 1px solid rgba($color-sage, 0.4);
+    border-radius: 999px;
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HERO
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding: 140px #{"clamp(20px, 4vw, 48px)"} 80px;
+  overflow: hidden;
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    // warm photographic duotone via layered gradients (no image needed)
+    background:
+      radial-gradient(120% 90% at 78% 12%, rgba($color-gold, 0.4), transparent 55%),
+      radial-gradient(90% 80% at 12% 88%, rgba($color-terracotta, 0.32), transparent 60%),
+      linear-gradient(155deg, #f3e7d6 0%, $color-cream 42%, #ecdcc8 100%);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      // fine sun-warmed grain
+      background-image: radial-gradient(rgba($color-ink, 0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(125deg, rgba(0,0,0,0.5), transparent 70%);
+      -webkit-mask-image: linear-gradient(125deg, rgba(0,0,0,0.5), transparent 70%);
+    }
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .hero-copy { max-width: 660px; }
+
+  .hero-title {
+    font-size: #{"clamp(56px, 10vw, 132px)"};
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 26px;
+  }
+
+  .hero-lede {
+    font-size: #{"clamp(17px, 1.4vw, 20px)"};
+    font-weight: 300;
+    line-height: 1.7;
+    color: $color-ink-soft;
+    max-width: 540px;
+    margin-bottom: 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 56px;
+  }
+
+  .hero-facts {
+    display: flex;
+    gap: #{"clamp(28px, 5vw, 64px)"};
+    flex-wrap: wrap;
+
+    li {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: relative;
+      padding-left: 22px;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 4px; bottom: 4px;
+        width: 1px;
+        background: rgba($color-gold, 0.6);
+      }
+
+      strong {
+        font-family: $font-display;
+        font-size: 30px;
+        font-weight: 600;
+        color: $color-ink;
+        line-height: 1;
+      }
+      span {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: $color-ink-soft;
+      }
+    }
+  }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: $color-ink-soft;
+    opacity: 0.6;
+    z-index: 1;
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SUITES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.suites {
+  padding: #{"clamp(72px, 9vw, 132px)"} #{"clamp(20px, 4vw, 48px)"};
+  background: $color-cream-deep;
+
+  .suites-inner { max-width: 1180px; margin: 0 auto; }
+
+  .suites-head {
+    max-width: 560px;
+    margin-bottom: 56px;
+
+    h2 {
+      font-size: #{"clamp(34px, 5vw, 56px)"};
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 17px;
+      font-weight: 300;
+      color: $color-ink-soft;
+      line-height: 1.7;
+    }
+  }
+
+  .suite-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+  }
+
+  .suite-card {
+    @include paper-card;
+    overflow: hidden;
+    transition: transform 0.4s $ease-out, box-shadow 0.4s $ease-out;
+
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 32px 70px -34px rgba($color-ink, 0.45);
+    }
+  }
+
+  .suite-photo {
+    height: 200px;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+      background-size: 14px 14px;
+      mix-blend-mode: overlay;
+    }
+  }
+  .suite-photo--terra {
+    background: linear-gradient(150deg, #d98a5e 0%, $color-terracotta 60%, #93512f 100%);
+  }
+  .suite-photo--sage {
+    background: linear-gradient(150deg, #9aa789 0%, $color-sage 60%, #5d6a52 100%);
+  }
+  .suite-photo--gold {
+    background: linear-gradient(150deg, #d8b878 0%, $color-gold 60%, #8f6f37 100%);
+  }
+
+  .suite-body {
+    padding: 26px 26px 30px;
+
+    h3 { font-size: 26px; margin-bottom: 8px; }
+    p {
+      font-size: 14px;
+      font-weight: 300;
+      color: $color-ink-soft;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .suite-rate {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: $color-terracotta;
+    }
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// CHECK-IN — split form (left) + QR (right)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.section.checkin-shell {
+  background: $color-cream;
+  position: relative;
+
+  .checkin-head {
+    max-width: 620px;
+    margin: 0 auto 56px;
+    text-align: center;
+
+    h2 {
+      font-size: #{"clamp(34px, 5vw, 56px)"};
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 17px;
+      font-weight: 300;
+      color: $color-ink-soft;
+      line-height: 1.7;
+    }
+  }
+
+  .checkin-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    max-width: 1080px;
+    margin: 0 auto;
+    width: 100%;
+    gap: 40px;
+  }
+
+  .checkin-form-pane {
+    flex: 1 1 460px;
+    position: relative;
+  }
+
+  .checkin-qr-pane {
+    flex: 1 1 360px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+}
+
+// ── Form ──────────────────────────────────────────────────────────
+.checkin-form {
+  @include paper-card;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+
+  .form-head {
+    margin-bottom: 4px;
+    .form-kicker {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: $color-terracotta;
+      margin-bottom: 6px;
+    }
+    h3 { font-size: 30px; }
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: $color-ink-soft;
+  }
+
+  label.row {
+    flex-direction: row;
+    gap: 18px;
+
+    > span {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .totals {
+      align-items: flex-end;
+      output {
+        font-family: $font-display;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: $color-ink;
+        padding: 6px 0;
+        line-height: 1;
+      }
+    }
+  }
+
+  input, select {
+    padding: 13px 14px;
+    border: 1px solid rgba($color-ink, 0.16);
+    border-radius: 11px;
+    background: rgba($color-cream, 0.6);
+    color: $color-ink;
+    font-family: $font-body;
+    font-size: 15px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+
+    &::placeholder { color: rgba($color-ink, 0.3); font-style: italic; }
+    &:focus { outline: none; border-color: rgba($color-terracotta, 0.6); }
+    &:disabled { cursor: not-allowed; }
+
+    &.filled {
+      border-color: rgba($color-sage, 0.7);
+      background: rgba($color-sage, 0.1);
+      color: $color-ink;
+      animation: field-pulse 700ms $ease-out;
+    }
+
+    &.field-typing {
+      border-color: rgba($color-terracotta, 0.55);
+      background:
+        linear-gradient(
+          90deg,
+          rgba($color-terracotta, 0.05) 0%,
+          rgba($color-terracotta, 0.18) 50%,
+          rgba($color-terracotta, 0.05) 100%
+        );
+      background-size: 200% 100%;
+      animation: field-shimmer 1.2s linear infinite;
+      caret-color: $color-terracotta;
+    }
+  }
+
+  select { cursor: pointer; }
+
+  .button { margin-top: 6px; }
+
+  .form-note {
+    font-size: 12px;
+    font-weight: 300;
+    color: $color-ink-soft;
+    text-align: center;
+    margin-top: -4px;
+  }
+
+  .form-status {
+    font-size: 13px;
+    min-height: 16px;
+    text-align: center;
+
+    &.info { color: $color-ink-soft; }
+    &.ok { color: $color-sage; font-weight: 500; }
+    &.error { color: $color-error; font-weight: 500; }
+  }
+}
+
+// ── QR card ────────────────────────────────────────────────────────
+.qr-card {
+  @include paper-card;
+  background: linear-gradient(170deg, $color-paper 0%, #f4ead9 100%);
+  padding: 34px 30px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .qr-card-head {
+    margin-bottom: 22px;
+
+    .qr-kicker {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: $color-terracotta;
+      margin-bottom: 6px;
+    }
+    h3 { font-size: 28px; margin-bottom: 6px; }
+    p { font-size: 13px; font-weight: 300; color: $color-ink-soft; }
+  }
+
+  .qr-frame {
+    display: inline-block;
+    align-self: center;
+    padding: 16px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid rgba($color-gold, 0.35);
+    box-shadow: 0 12px 30px -18px rgba($color-ink, 0.5);
+    margin-bottom: 22px;
+
+    svg { width: 280px; height: 280px; display: block; }
+  }
+
+  #qr-status {
+    font-size: 13px;
+    color: $color-ink-soft;
+    min-height: 18px;
+
+    &.authenticated { color: $color-sage; font-weight: 600; }
+    &.error { color: $color-error; font-weight: 500; }
+    &.info { color: $color-ink; }
+  }
+}
+
+// ── Stage track (QR pane) ─────────────────────────────────────────
+.stage-track {
+  margin: 4px 0 0;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  background: rgba($color-cream, 0.6);
+  border: 1px solid rgba($color-gold, 0.3);
+  border-radius: 13px;
+
+  .stage-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: rgba($color-ink, 0.4);
+    transition: color 300ms $ease-out;
+    position: relative;
+  }
+
+  .stage-step + .stage-step::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: -12px;
+    width: 1px;
+    height: 12px;
+    background: rgba($color-gold, 0.4);
+  }
+
+  .stage-dot {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba($color-ink, 0.25);
+    background: transparent;
+    position: relative;
+    transition: border-color 250ms $ease-out, background 250ms $ease-out;
+  }
+
+  .stage-step.active {
+    color: $color-ink;
+    font-weight: 500;
+
+    .stage-dot {
+      border-color: $color-terracotta;
+      background: rgba($color-terracotta, 0.2);
+      animation: stage-pulse 1.4s $ease-out infinite;
+    }
+  }
+
+  .stage-step.done {
+    color: $color-sage;
+
+    .stage-dot {
+      border-color: $color-sage;
+      background: $color-sage;
+    }
+    .stage-dot::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 0;
+      width: 4px;
+      height: 8px;
+      border: solid $color-paper;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  .stage-step.error {
+    color: $color-error;
+
+    .stage-dot {
+      border-color: $color-error;
+      background: rgba($color-error, 0.18);
+    }
+    .stage-dot::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 1px;
+      width: 2px;
+      height: 8px;
+      background: $color-error;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+// ── Pay overlay ───────────────────────────────────────────────────
+.pay-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba($color-cream, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms $ease-out;
+  z-index: 4;
+
+  &.visible { opacity: 1; pointer-events: auto; }
+
+  .pay-overlay-card {
+    @include paper-card;
+    width: 100%;
+    max-width: 420px;
+    padding: 34px 28px;
+    text-align: center;
+  }
+
+  .pay-overlay-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+
+  .pay-amount-large {
+    font-family: $font-display;
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: $color-ink;
+    line-height: 1;
+  }
+
+  .pay-amount-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: $color-ink-soft;
+  }
+
+  .pay-track {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .pay-step {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    align-items: center;
+    gap: 13px;
+    padding: 11px 13px;
+    border-radius: 11px;
+    background: rgba($color-cream, 0.55);
+    border: 1px solid rgba($color-gold, 0.3);
+    color: rgba($color-ink, 0.42);
+    font-size: 13px;
+    transition: color 250ms $ease-out, border-color 250ms $ease-out, background 250ms $ease-out;
+
+    .pay-step-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($color-ink, 0.06);
+      color: rgba($color-ink, 0.45);
+      transition: background 250ms $ease-out, color 250ms $ease-out, transform 250ms $ease-out;
+
+      svg { width: 15px; height: 15px; }
+    }
+
+    .pay-progress {
+      grid-column: 1 / -1;
+      display: none;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba($color-ink, 0.1);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .pay-progress-bar {
+      display: block;
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(90deg, $color-gold, $color-terracotta);
+      border-radius: 2px;
+      animation: pay-progress 1.6s ease-in-out infinite;
+    }
+
+    &.active {
+      color: $color-ink;
+      border-color: rgba($color-terracotta, 0.5);
+      background: rgba($color-terracotta, 0.07);
+
+      .pay-step-icon {
+        background: rgba($color-terracotta, 0.2);
+        color: $color-terracotta;
+        animation: stage-pulse 1.4s $ease-out infinite;
+      }
+
+      &[data-pay-step="charge"] .pay-progress { display: block; }
+      &[data-pay-step="approve"] .pay-step-icon { animation: pay-bob 1.6s $ease-out infinite; }
+    }
+
+    &.done {
+      color: $color-sage;
+      border-color: rgba($color-sage, 0.45);
+      background: rgba($color-sage, 0.08);
+
+      .pay-step-icon { background: $color-sage; color: $color-paper; }
+    }
+
+    &.error {
+      color: $color-error;
+      border-color: rgba($color-error, 0.5);
+      background: rgba($color-error, 0.08);
+
+      .pay-step-icon { background: rgba($color-error, 0.18); color: $color-error; }
+    }
+  }
+
+  &.success .pay-overlay-card { animation: success-burst 700ms $ease-out; }
+
+  .pay-overlay-status {
+    margin-top: 18px;
+    min-height: 18px;
+    font-size: 13px;
+    color: $color-ink-soft;
+
+    &.error { color: $color-error; font-weight: 500; }
+    &.ok { color: $color-sage; font-weight: 500; }
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────
+@keyframes field-pulse {
+  0% { box-shadow: 0 0 0 0 rgba($color-sage, 0.45); }
+  100% { box-shadow: 0 0 0 12px rgba($color-sage, 0); }
+}
+@keyframes field-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes stage-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba($color-terracotta, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba($color-terracotta, 0); }
+}
+@keyframes pay-progress {
+  0% { transform: translateX(-120%); width: 30%; }
+  50% { width: 55%; }
+  100% { transform: translateX(380%); width: 30%; }
+}
+@keyframes pay-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes success-burst {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.03); box-shadow: 0 0 0 0 rgba($color-sage, 0.4); }
+  100% { transform: scale(1); box-shadow: 0 0 0 24px rgba($color-sage, 0); }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// CONFIRMATION
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.section.confirmation-shell {
+  background:
+    radial-gradient(90% 70% at 80% 0%, rgba($color-gold, 0.3), transparent 60%),
+    $color-cream;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 140px;
+  padding-bottom: 80px;
+
+  .confirmation-inner {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .confirmation-card {
+    @include paper-card;
+    padding: #{"clamp(40px, 6vw, 64px)"} #{"clamp(28px, 5vw, 56px)"};
+    text-align: center;
+
+    h1 {
+      font-size: #{"clamp(38px, 5vw, 60px)"};
+      margin-bottom: 14px;
+    }
+
+    .confirmation-lede {
+      font-size: 16px;
+      font-weight: 300;
+      color: $color-ink-soft;
+      line-height: 1.7;
+      max-width: 440px;
+      margin: 0 auto 32px;
+    }
+
+    .confirmation-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 22px;
+      border-radius: 50%;
+      background: rgba($color-sage, 0.16);
+      color: $color-sage;
+      border: 1px solid rgba($color-sage, 0.4);
+    }
+
+    .reset-form { margin-top: 36px; }
+  }
+
+  .confirmation-card--empty .eyebrow { color: $color-ink-soft; }
+
+  .confirmation-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 8px;
+    text-align: left;
+
+    > div {
+      padding: 15px 18px;
+      border-radius: 12px;
+      background: rgba($color-cream, 0.6);
+      border: 1px solid rgba($color-gold, 0.28);
+    }
+    .span-2 { grid-column: 1 / -1; }
+
+    dt {
+      font-size: 10.5px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: $color-ink-soft;
+      margin-bottom: 5px;
+    }
+    dd {
+      font-size: 16px;
+      color: $color-ink;
+      word-break: break-word;
+    }
+    .mono {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 13px;
+    }
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FOOTER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.site-footer {
+  background: $color-ink;
+  color: rgba($color-cream, 0.78);
+  padding: 48px #{"clamp(20px, 4vw, 48px)"};
+
+  .site-footer-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .footer-brand { display: flex; flex-direction: column; gap: 4px; }
+  .footer-name {
+    font-family: $font-display;
+    font-size: 28px;
+    font-weight: 600;
+    color: $color-cream;
+  }
+  .footer-tagline {
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba($color-cream, 0.55);
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: right;
+    font-size: 13px;
+    color: rgba($color-cream, 0.6);
+  }
+  .footer-permyt a {
+    color: $color-gold;
+    border-bottom: 1px solid rgba($color-gold, 0.4);
+    transition: color 0.2s;
+    &:hover { color: lighten($color-gold, 12%); }
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// RESPONSIVE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@media (max-width: 860px) {
+  .navbar .nav-right { gap: 16px; }
+  .navbar .nav-link { display: none; }
+}
+
+@media (max-width: 768px) {
+  .section.checkin-shell .checkin-inner { gap: 28px; }
+  .checkin-form-pane, .checkin-qr-pane { flex-basis: 100%; }
+
+  .qr-card {
+    .qr-frame { align-self: center; max-width: 320px; }
+    .qr-frame svg { width: 100%; height: auto; }
+  }
+
+  .checkin-form label.row { flex-direction: column; }
+
+  .site-footer .site-footer-inner { flex-direction: column; align-items: flex-start; }
+  .site-footer .footer-meta { text-align: left; }
+
+  .section.confirmation-shell .confirmation-details { grid-template-columns: 1fr; }
+  .section.confirmation-shell .confirmation-details .span-2 { grid-column: auto; }
+}

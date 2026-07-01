@@ -1,0 +1,107 @@
+{% extends "pages/common/base.html" %}
+{% load static %}
+
+{% block body %}
+<section class="section onboard-shell">
+  <div class="onboard-inner">
+
+    <div class="onboard-head fade-in" style="--stagger: 0">
+      <div>
+        <div class="crumb">
+          <i data-lucide="shield-check"></i>
+          Open account &nbsp;·&nbsp; Safer gambling &nbsp;·&nbsp; Quick checks
+        </div>
+        <h1>Let's get you playing — safely</h1>
+        <p class="onboard-sub">
+          Before your first bet we confirm just four things — that you're over 18,
+          who you are, that this deposit is within your means, and that you haven't
+          self-excluded — by asking the authoritative sources directly
+          <span class="via">via PERMYT</span>. No documents, no statements, no uploads.
+        </p>
+      </div>
+      <div class="onboard-action">
+        {% csrf_token %}
+        <span class="onboard-live"><span class="spinner"></span> Confirming your details with the authoritative sources…</span>
+        <button type="button" id="retryBtn" class="button primary" hidden>
+          <i data-lucide="rotate-ccw"></i> Try again
+        </button>
+      </div>
+    </div>
+
+    <div class="onboard-grid">
+
+      <!-- LEFT: source-direct answers -->
+      <div class="panel fade-in" style="--stagger: 1">
+        <div class="panel-title">
+          <i data-lucide="badge-check"></i> What the sources confirmed
+        </div>
+
+        <div id="collected" class="collected-grid"></div>
+
+        <div id="collectedEmpty" class="collected-empty">
+          <i data-lucide="dice-5"></i>
+          <div>Approve on your PERMYT app and the authoritative sources will answer our safer-gambling checks directly.</div>
+        </div>
+
+        <!-- RESULT: all answers received -->
+        <div id="answersDone" class="result-card hidden">
+          <div class="result-head">
+            <span class="result-title">
+              <i data-lucide="party-popper"></i> You're all set
+            </span>
+            <span class="badge success" id="resultBadge">
+              <i data-lucide="check"></i> Verified
+            </span>
+          </div>
+          <div class="result-body">
+            <p class="done-line">
+              All answers received — the authoritative sources answered directly.
+            </p>
+            <p class="done-sub">
+              Your bank confirmed affordability directly, so you never uploaded a
+              statement to a betting site. Play it safe — and have fun.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: progress -->
+      <div class="panel fade-in" style="--stagger: 2">
+        <div class="panel-title">
+          <i data-lucide="list-checks"></i> Progress
+        </div>
+        <ol class="stage-track" id="stageTrack">
+          <li data-stage="requested" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Requested</span>
+          </li>
+          <li data-stage="approval" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Awaiting your approval on PERMYT</span>
+          </li>
+          <li data-stage="approved" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Approved</span>
+          </li>
+          <li data-stage="answers" class="stage-step pending">
+            <span class="stage-dot"></span><span class="stage-label">Answers received</span>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <footer class="app-footer">
+      <span class="footer-powered">
+        <span class="brand-word">Luckwing</span> · play it safe
+      </span>
+      <span class="footer-permyt">Your checks are answered directly by the authoritative source &amp; brokered via PERMYT — Luckwing never sees your documents.</span>
+    </footer>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.__permytUserId = "{{ permyt_user_id|escapejs }}";
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

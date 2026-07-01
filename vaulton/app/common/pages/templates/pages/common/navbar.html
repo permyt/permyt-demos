@@ -1,0 +1,32 @@
+{% load static %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="vaultonMark" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#8b5cf6"/>
+            <stop offset="1" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="11" fill="url(#vaultonMark)"/>
+        <path d="M20 9l9 5.2v10.4L20 30l-9-5.4V14.2L20 9z" stroke="#0b0f1a" stroke-width="2.2" stroke-linejoin="round" fill="none"/>
+        <circle cx="20" cy="19.6" r="3.1" fill="#0b0f1a"/>
+        <path d="M20 22.7v4.1" stroke="#0b0f1a" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span>Vaulton</span>
+    </span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-mode">Sandbox</span>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" class="nav-logout-form">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout">
+        <i data-lucide="log-out"></i>
+        Sign out
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</nav>
